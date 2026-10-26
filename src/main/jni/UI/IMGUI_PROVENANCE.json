@@ -1,0 +1,62 @@
+{
+  "source": "https://github.com/ocornut/imgui",
+  "tag": "v1.89.6",
+  "files": [
+    {
+      "file": "imgui.h",
+      "sha256": "27ce505daa602cc7cb69345606b14cccd8d4bc8b248c30765093416dead73ec8"
+    },
+    {
+      "file": "imgui_internal.h",
+      "sha256": "d6d542e8587c141bac10ef215819a629780ac961389359d7215bf4bd4063541a"
+    },
+    {
+      "file": "imgui.cpp",
+      "sha256": "6115fc1e2fb5eaab778839c5e1e7e1e0f8d27807652bd842d50250cee6807cf4"
+    },
+    {
+      "file": "imgui_draw.cpp",
+      "sha256": "3e1762d722eb57f6bc7f704bd47af41c8fb83f7dbff66847b47c24a4fedcc096"
+    },
+    {
+      "file": "imgui_widgets.cpp",
+      "sha256": "0fd6d3eb743297c3b13e315792d421b6b1fa503d4de0b494f848354ef1271d93"
+    },
+    {
+      "file": "imgui_tables.cpp",
+      "sha256": "bad97e0cad20eded56894545b78282aab0e67a721122b49e91eb81fe08191e49"
+    },
+    {
+      "file": "imconfig.h",
+      "sha256": "8d887055ad9b411a677d7c873f693a511522eb9473353f563b597db9142398c9"
+    },
+    {
+      "file": "imstb_rectpack.h",
+      "sha256": "2efa3d5f7d003c19743b15155dad9f46d9f9fc783a18893d703b431d3c990972"
+    },
+    {
+      "file": "imstb_textedit.h",
+      "sha256": "3f4cf71a2b771d938f62ce4225df3ebe429b334fcdb3b89f1fedf43eeb0a3e1e"
+    },
+    {
+      "file": "imstb_truetype.h",
+      "sha256": "5b7693f174b0458c7bec5522c8d6be4fe606d3f5da5082351959c14e59269b53"
+    },
+    {
+      "file": "LICENSE.txt",
+      "sha256": "438f0d4dd95acd6723a8f2996ec365245de154ff52a390aa644624aa95aabf2c"
+    },
+    {
+      "file": "backends/imgui_impl_opengl3.cpp",
+      "sha256": "5889eba798e6089596dec8ddd2bc64e93d29f95bd8929e17fb9877cf901121aa"
+    },
+    {
+      "file": "backends/imgui_impl_opengl3.h",
+      "sha256": "67d2488046a3fa8997cacbf4f920ebb13d0424dd98885b8963ddd0e0ee87f66e"
+    },
+    {
+      "file": "backends/imgui_impl_opengl3_loader.h",
+      "sha256": "2bb7e77fb20963b57cbcca409b5b2d246046d75940ebbca4cb9ac245e7785ec9"
+    }
+  ]
+}

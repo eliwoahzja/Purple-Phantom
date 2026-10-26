@@ -1,0 +1,83 @@
+#pragma once
+#include <cstring>
+
+namespace StudioUI {
+// Describes the existing controls. These labels do not promise runtime support.
+static const char* Description(const char* label) {
+    struct Hint { const char* label; const char* text; };
+    static const Hint hints[] = {
+        {"Enable ESP", "Turn the configured player overlays on or off."},
+        {"Player lines", "Draw a guide line toward each player."},
+        {"Player boxes", "Outline players with a visible box."},
+        {"Health", "Display player health indicators."},
+        {"Names", "Show names beside player overlays."},
+        {"Distance", "Display the distance to each player."},
+        {"Off-screen alerts", "Mark players outside the visible screen."},
+        {"Vehicles", "Show the configured vehicle overlays."},
+        {"ESP presentation", "Choose the appearance of the overlay."},
+        {"Spectate without delay", "Enable the existing spectate-delay control."},
+        {"Wallhack glow", "Enable the existing wall-visibility effect."},
+        {"Multiplayer radar", "Enable the multiplayer radar setting."},
+        {"Royale tags", "Enable the battle royale player-tag setting."},
+        {"Snowboard boost", "Enable snowboard boost; tune its value below."},
+        {"Boost", "Set the snowboard boost amount."},
+        {"Long slide", "Enable extended slides; set the range below."},
+        {"Slide range", "Set how far the slide control extends."},
+        {"Speed hack", "Enable the movement-speed multiplier."},
+        {"Speed multiplier", "Set the movement-speed multiplier."},
+        {"High jump", "Enable jump adjustment. Turning off resets it to 1x."},
+        {"Jump multiplier", "Set the jump-height multiplier."},
+        {"Aimlock", "Enable the existing aim-assistance control."},
+        {"Smoothness", "Adjust the aim-assistance value."},
+        {"Field of view", "Set the targeting field-of-view value."},
+        {"Target", "Choose the body area used for targeting."},
+        {"Activation", "Choose when targeting assistance activates."},
+        {"Aimbot 360", "Toggle the existing 360-degree aim setting."},
+        {"Bullet track", "Toggle the existing bullet-tracking setting."},
+        {"Fast revival", "Enable the reduced revival-time setting."},
+        {"Fast medicine", "Enable the reduced medicine-use time setting."},
+        {"Weapon kinetic", "Enable the existing weapon kinetic setting."},
+        {"No recoil", "Enable weapon recoil reduction."},
+        {"No spread", "Enable shot-spread reduction."},
+        {"No reload", "Enable the reload-delay control."},
+        {"No scope", "Enable the scope-delay control."},
+        {"No switch", "Enable the weapon-switch delay control."},
+        {"No shake", "Enable weapon camera-shake reduction."},
+        {"Unlimited bullets", "Toggle the existing ammunition setting."},
+        {"No overheat", "Enable the weapon-overheating control."},
+        {"Long range", "Enable the extended weapon-range setting."},
+        {"Instant shot", "Enable the instant-shot setting."},
+        {"Big hitbox", "Enable the existing hitbox-size setting."},
+        {"Quick firing", "Enable the rapid-firing setting."},
+        {"Jet boost + slide", "Enable the jet-boost slide setting."},
+        {"No slide fatigue", "Toggle slide-fatigue handling when a verified backend is connected."},
+        {"Long execute", "Enable the extended execution-range setting."},
+        {"No parachute", "Toggle the existing parachute setting."},
+        {"Sky diving speed", "Enable the sky-diving speed setting."},
+        {"Two Gulag tickets", "Enable the existing Gulag-ticket setting."},
+        {"Magnet loot", "Enable the existing loot-attraction setting."},
+        {"Fast loot", "Enable the faster loot-pickup setting."},
+        {"Jet boost + jump", "Enable the jet-boost jump setting."},
+        {"Extreme high end", "Toggle the existing high-end graphics profile."},
+        {"Anti FPS drop", "Toggle the existing frame-rate stability setting."},
+        {"Maximum frame rate", "Toggle the existing frame-rate limit setting."},
+        {"Show floating control", "Keep a short navigation hint above the home bar."},
+        {"Interface accent", "Choose the tint of enabled glass controls."},
+        {"Player box", "Choose the player-box color."},
+        {"Player line", "Choose the player-line color."},
+        {"Player name", "Choose the player-name color."},
+        {"Player health", "Choose the player-health color."},
+        {"Player distance", "Choose the player-distance color."},
+        {"Bot box", "Choose the bot-box color."},
+        {"Bot line", "Choose the bot-line color."},
+        {"Bot name", "Choose the bot-name color."},
+        {"Bot health", "Choose the bot-health color."},
+        {"Bot distance", "Choose the bot-distance color."},
+        {"Paste key", "Copy the license key from your clipboard."},
+        {"Continue", "Verify your key and open the controls."}
+    };
+    for (const auto& h : hints)
+        if (std::strcmp(label, h.label) == 0) return h.text;
+    return "";
+}
+} // namespace StudioUI

@@ -1,0 +1,47 @@
+{
+  "changed": [
+    "build.gradle",
+    "src/main/AndroidManifest.xml",
+    "src/main/java/com/android/support/ImGuiView.java",
+    "src/main/java/com/android/support/MainActivity.java",
+    "src/main/jni/Android-game.mk",
+    "src/main/jni/Android.mk",
+    "src/main/jni/Main.cpp",
+    "src/main/jni/Preview/PreviewNative.cpp",
+    "src/main/jni/Preview/PreviewState.h",
+    "src/main/jni/UI/ApplicationUI.h",
+    "src/main/jni/UI/StudioComponents.h",
+    "src/main/res/values/strings.xml",
+    "src/main/res/values/styles.xml"
+  ],
+  "added": [
+    "REDESIGN_FILES.json",
+    "REDESIGN_NOTES.md",
+    "previews/glass_aim.png",
+    "previews/glass_navigation.png",
+    "previews/glass_portrait.png",
+    "previews/glass_portrait_navigation.png",
+    "previews/glass_visuals.png",
+    "src/main/jni/Android-preview.mk",
+    "src/main/jni/UI/ControlDescriptions.h",
+    "tests/run_ui_tests.sh",
+    "tests/ui_interaction_tests.cpp"
+  ],
+  "removed": [
+    "src/main/jni/UI/ApplicationUI.h.bak"
+  ],
+  "verification": {
+    "production_default": "Android.mk includes Android-game.mk unless WC_BUILD_PREVIEW=1",
+    "production_module": "whitecrowns (libwhitecrowns.so)",
+    "preview_module": "studio_preview (opt-in only)",
+    "activity_load": "System.loadLibrary(\"whitecrowns\")",
+    "toggle_bindings": 46,
+    "slider_bindings": 6,
+    "selectors": 3,
+    "color_bindings": 11,
+    "interaction_tests": "Passed",
+    "undefined_behavior_sanitizer": "Passed",
+    "android_build": "Not performed: SDK/NDK unavailable",
+    "address_sanitizer": "Compiled; runtime could not complete due sandbox process access"
+  }
+}

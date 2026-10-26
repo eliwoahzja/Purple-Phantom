@@ -1,0 +1,97 @@
+ANTIPROC OBFUSCATOR - USAGE GUIDE
+
+TOOL NAME  : ANTIPROC
+TYPE       : C++ STRING OBFUSCATOR
+OWNER      : TG @CKYMINT
+
+
+WHAT THIS TOOL DOES
+
+ANTIPROC is a lightweight C++ compile-time string obfuscation system.
+
+It protects sensitive strings like API keys, URLs, tokens, and configs by
+encoding them at compile time and decoding them only when needed at runtime.
+
+
+HOW TO INSTALL / USE
+
+1. COPY HEADER FILE
+
+Place the header into your project:
+
+    /CROWEXE/antiprocobf.hpp   (create folder if not exist)
+
+Then include it in your main file:
+
+    #include "CROWEXE/antiprocobf.hpp"
+
+
+2. BASIC USAGE
+
+To obfuscate a string:
+
+    auto secret = DEOBF("hello world");
+
+Or:
+
+    auto secret = DEOBFSTR("my_api_key_123");
+
+Use it normally:
+
+    std::cout << secret << std::endl;
+
+
+3. ADVANCED USAGE
+
+You can also use the macro directly:
+
+    ANTIPROC_OBFUSCATE("text")
+
+Example:
+
+    auto token = ANTIPROC_OBFUSCATE("12345");
+
+Access it:
+
+    std::cout << token.c_str();
+
+
+4. WHEN TO USE
+
+Use ANTIPROC for:
+- API keys
+- Secret tokens
+- Internal strings
+- Anti-tamper values
+- Sensitive configuration data
+
+Do NOT use for:
+- UI text
+- Debug logs
+- Large text files
+
+
+5. SECURITY NOTES
+
+- This is obfuscation, NOT encryption
+- It prevents basic static string scanning
+- Advanced reverse engineering can still recover strings
+- Do not rely on it as your only security layer
+
+
+6. LICENSE / WARNING
+
+This tool is private and restricted.
+
+- Not for resale
+- Not for redistribution
+- Not for commercial use without permission
+- Not allowed to be repackaged
+
+Violation may result in removal of access.
+
+
+7. AUTHOR
+
+TG: @CKYMINT
+PROJECT: ANTIPROC

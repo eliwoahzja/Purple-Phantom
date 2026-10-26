@@ -1,0 +1,32 @@
+struct My_Patches
+{
+MemoryPatch
+A1, 
+rpd, 
+grap,
+ultra, 
+smk,
+Waller, 
+chute, 
+wing, 
+tutorial, 
+cost, 
+red, 
+jets, 
+jetj, 
+fire, 
+fpss, 
+fps,
+frame, 
+revive, 
+gulag,
+loot,
+magnet,
+outline, 
+patch,
+range, 
+kinetic, 
+autosnipe,
+NoSlideFatigue,
+NoSlideFatiguePve;
+} Patches;
