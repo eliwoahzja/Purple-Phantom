@@ -88,7 +88,7 @@ RuntimeStatus GetRuntimeStatus() noexcept {
 }
 
 const char* GetRuntimeStatusText() noexcept {
-    return "Unavailable: original game binary not verified";
+    return "Unavailable: native adapter verification pending";
 }
 
 FireMode GetDetectedFireMode() noexcept {

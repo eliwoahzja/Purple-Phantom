@@ -48,6 +48,20 @@ class BinaryInspectionTests(unittest.TestCase):
             with self.subTest(length=len(data)), self.assertRaises(inspector.ElfError):
                 inspector.inspect(data, 'bad.so')
 
+    def test_accessor_prefix_mismatch_is_reported(self):
+        data = fixture()
+        struct.pack_into('<Q', data, 64 + 16, 0xA81F798)
+        report = inspector.inspect(data, 'synthetic.so')
+        candidate = next(x for x in report['candidate_bindings']
+                         if x['name'] == 'CheckFireParam.set_CheckFire')
+        self.assertFalse(candidate['executable_file_backed_matches'][0]['accessor_prefix_matches'])
+        data[0x100:0x108] = inspector.REFERENCE_PREFIXES['CheckFireParam.set_CheckFire']
+        report = inspector.inspect(data, 'synthetic.so')
+        candidate = next(x for x in report['candidate_bindings']
+                         if x['name'] == 'CheckFireParam.set_CheckFire')
+        self.assertTrue(candidate['executable_file_backed_matches'][0]['accessor_prefix_matches'])
+        self.assertIn('no semantic validation', report['analysis'])
+
     def test_inspection_cannot_overwrite_original(self):
         with tempfile.TemporaryDirectory() as directory:
             source = Path(directory) / 'original.so'

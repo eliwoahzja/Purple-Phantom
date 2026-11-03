@@ -1,10 +1,51 @@
 # Native trigger validation
 
-The original ARM64 **game** library for the installed game build is required.
-It is not included in this repository. The supplied 1.6.57 C# dump records
-candidate addresses and declarations; it does not contain method bodies or
-establish that those addresses match the installed binary. The app's compiled
-overlay library is not a substitute for the original game library.
+The user supplied the ARM64 game library through the linked dataset on
+2026-11-03. The 1.6.57 C# dump records candidate addresses and declarations;
+it does not establish that those addresses match the installed runtime code.
+The large binary stays outside this repository.
+
+## Supplied binary findings
+
+- File size: `246851416` bytes; ELF64 little-endian AArch64.
+- SHA-256: `91781232f051c712cbc7f78ebdb95f4faa739b70c9b2567c05b9fa5b8c53ed1f`.
+- GNU build ID: `1305bdeea30b989f`.
+- `Weapon.get_IsSingleShot` at `0x50EBA5C` calls the active component getter
+  and then `WeaponFireComponent.get_IsSingleShot`. The burst getter at
+  `0x50EBB28` reads the dump's weapon field at `0x20C` and returns.
+- The clear `UpdateFireInput` path calls `UpdateFireButtonStatus` before
+  `CheckFireInput`, but it also has a hotfix delegate path. Static inspection
+  alone does not prove which path the installed game executes.
+- The dump's eight-byte `set_CheckFire` at `0xA81F798` should store the bool
+  at `0x13` and return (`014c0039c0035fd6`). The supplied file instead has
+  `e64646f2ce24047f` there. The held-input getter also differs, and the
+  recorded body-trace/shot-acknowledgement routines contain long runs of
+  bytes that do not disassemble as coherent ARM64 instructions.
+
+This is evidence that matching some RVAs or covering them with an executable
+segment is insufficient. It does not establish whether the running game
+unpacks, relocates, patches, or replaces those routines. No native calls or
+hooks were approved from these file bytes.
+
+## Read-only device report
+
+Build this branch's production native library using the project's existing
+process. In the running game's menu, enter **Aim → Game compatibility**, then
+press **Check game compatibility** after entering a match. Share the report
+shown there (screenshots are sufficient).
+
+The check locates loaded `libunity.so` through the loader, validates each
+requested code window against its readable executable segments, and captures
+only seven fixed sixteen-byte code windows. Ordinary `pread` calls on
+`/proc/self/mem` handle unavailable or removed mappings as errors. It does not dereference game objects,
+call game functions, change memory permissions, patch instructions, install
+hooks, or enable firing. It runs only on the explicit button press. If the
+process denies access to its memory file, the report says unreadable. No raw
+process-memory syscalls or signal handlers are used.
+
+The prefix results are diagnostic observations, not approval to enable native
+firing. A runtime report is the next input needed to reconcile the file/dump
+discrepancy before implementing the live adapter.
 
 ## Implementation status
 
@@ -15,10 +56,10 @@ install trigger hooks.** There are no approved binary profiles; enabling the UI
 switch stores a request and continues to show unavailable. The pure input helper
 can produce intents in tests, but nothing applies them to game input.
 
-The remaining implementation needs the original game library: native query and
-input adapters, verified weapon-mode detection, live viewport publication,
-lifecycle generation tracking, and device acceptance. A binary inspection report
-alone is insufficient to fill in those semantics.
+Remaining work includes native query and input adapters, verified live
+weapon-mode detection, viewport publication, lifecycle generation tracking,
+and device acceptance. The supplied binary has been inspected, but the runtime
+discrepancy above must be resolved before implementing those calls.
 
 ## Reproducible local checks
 
@@ -26,10 +67,11 @@ alone is insufficient to fill in those semantics.
 bash tests/run_trigger_tests.sh
 bash tests/run_trigger_runtime_tests.sh
 bash tests/run_trigger_overlay_tests.sh
+bash tests/run_trigger_compatibility_tests.sh
 python3 -B tests/trigger_binary_tests.py
 ```
 
-All three C++ suites passed with AddressSanitizer and UndefinedBehaviorSanitizer.
+All four C++ suites passed with AddressSanitizer and UndefinedBehaviorSanitizer.
 The Python suite passed for structural ELF inspection, malformed input, and
 protecting the original binary from accidental output overwrite. The reference
 layout header was also compiled with the Android ARM64 compiler.
@@ -66,6 +108,8 @@ build ID, and reports whether each dump candidate's first instruction lies in
 file-backed executable `PT_LOAD` data. It prints JSON and optionally writes the
 same report. Malformed or unsupported input returns exit code 2 with a JSON
 error. Extended ELF header numbering is intentionally unsupported.
+Known short accessors also report their expected instruction prefix and whether
+the supplied bytes match. A match does not imply semantic or runtime approval.
 
 The tool cannot determine whether a candidate is the expected function, approve
 a runtime profile, activate hooks, or establish collision, smoke, timing, or

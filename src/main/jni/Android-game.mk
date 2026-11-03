@@ -61,6 +61,7 @@ FILE_LIST += $(wildcard $(LOCAL_PATH)/IL2CppSDKGenerator/KittyMemory/*.c*)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/libzip/*.c)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/*.c*)
 FILE_LIST += $(LOCAL_PATH)/Trigger/TriggerRuntime.cpp
+FILE_LIST += $(LOCAL_PATH)/Trigger/TriggerCompatibility.cpp
 
 LOCAL_SRC_FILES := $(FILE_LIST:$(LOCAL_PATH)/%=%) \
     Substrate/hde64.c \

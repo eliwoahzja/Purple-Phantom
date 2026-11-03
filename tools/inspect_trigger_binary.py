@@ -21,8 +21,21 @@ SECTION_HEADER = struct.Struct("<IIQQQQIIQQ")
 NOTE_HEADER = struct.Struct("<III")
 U64_LIMIT = 1 << 64
 
+# Exact short accessors expected from the supplied dump's field layouts. A
+# mismatch is evidence against calling this file directly, not a decryption or
+# relocation recipe. A match alone does not verify native behavior.
+REFERENCE_PREFIXES = {
+    "Weapon.get_IsBurstFire": bytes.fromhex("00304839c0035fd6"),
+    "CheckFireParam.set_CheckFire": bytes.fromhex("014c0039c0035fd6"),
+    "CheckFireParam.get_IsPress": bytes.fromhex("00704039c0035fd6"),
+}
+
 # Reference information only. The inspector never creates a runtime profile.
 REFERENCE_BINDINGS = (
+    ("CheckFireParam.set_CheckFire", 0xA81F798,
+     "public instance void set_CheckFire(bool value)"),
+    ("CheckFireParam.get_IsPress", 0xA81F818,
+     "public instance bool get_IsPress()"),
     ("WeaponFireModeUnit.UpdateFireButtonStatus", 0xBB4B66C,
      "public instance void UpdateFireButtonStatus(CheckFireParam fireResult)"),
     ("Weapon.get_IsSingleShot", 0x50EBA5C, "public instance bool get_IsSingleShot()"),
@@ -208,7 +221,14 @@ def inspect(data, source_name):
                     "program_header_index": segment["program_header_index"],
                     "file_offset": offset,
                     "first_instruction_hex": data[offset:offset + 4].hex(),
+                    "first_16_bytes_hex": data[offset:offset + min(16, segment["file_size"] - delta)].hex(),
                 })
+                prefix = REFERENCE_PREFIXES.get(name)
+                if prefix is not None:
+                    matches[-1]["expected_accessor_prefix_hex"] = prefix.hex()
+                    matches[-1]["accessor_prefix_matches"] = (
+                        delta + len(prefix) <= segment["file_size"]
+                        and data[offset:offset + len(prefix)] == prefix)
         candidates.append({
             "name": name,
             "rva": f"0x{address:X}",

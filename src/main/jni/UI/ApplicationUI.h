@@ -1,6 +1,7 @@
 #pragma once
 #include "StudioComponents.h"
 #include "../Trigger/TriggerRuntime.h"
+#include "../Trigger/TriggerCompatibility.h"
 #include <string>
 
 // UI only: the caller continues to own all values and feature callbacks.
@@ -94,6 +95,14 @@ static void AimControls() {
     EndGrid();
     ImGui::TextWrapped("Trigger: %s",PhantomTrigger::GetRuntimeStatusText());
     ImGui::TextWrapped("Weapon mode: %s",PhantomTrigger::GetDetectedFireModeText());
+    if(ImGui::CollapsingHeader("Game compatibility")) {
+        static char compatibility[1400]="Run this check after entering a match, then share the report.";
+        if(ImGui::Button("Check game compatibility")) {
+            const auto report=PhantomTrigger::CaptureLoadedCompatibility();
+            PhantomTrigger::FormatCompatibility(report,compatibility,sizeof(compatibility));
+        }
+        ImGui::TextWrapped("%s",compatibility);
+    }
     float viewportCenterX=.5f,viewportCenterY=.5f;
     if(triggerSettings.showDot && !PhantomTrigger::GetViewportCenter(viewportCenterX,viewportCenterY))
         ImGui::TextWrapped("The dot is a screen-center guide until the game viewport is verified.");
