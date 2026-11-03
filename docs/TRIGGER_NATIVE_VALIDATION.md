@@ -22,10 +22,13 @@ The large binary stays outside this repository.
   recorded body-trace/shot-acknowledgement routines contain long runs of
   bytes that do not disassemble as coherent ARM64 instructions.
 
-This is evidence that matching some RVAs or covering them with an executable
-segment is insufficient. It does not establish whether the running game
-unpacks, relocates, patches, or replaces those routines. No native calls or
-hooks were approved from these file bytes.
+The two supplied in-game screenshots subsequently confirmed the loaded
+`set_CheckFire`, `IsPress`, burst getter, shot counter, input update, body-trace,
+and smoke-query windows. The loaded setters match their dump field layouts.
+For static analysis only, selected encoded/reordered pages were reconstructed
+and cross-checked against those samples, declared field offsets, and native
+call graphs. No reconstructed library or decoding code is shipped or installed.
+The startup profile checks the actual loaded instructions before using them.
 
 ## Read-only device report
 
@@ -43,23 +46,75 @@ hooks, or enable firing. It runs only on the explicit button press. If the
 process denies access to its memory file, the report says unreadable. No raw
 process-memory syscalls or signal handlers are used.
 
-The prefix results are diagnostic observations, not approval to enable native
-firing. A runtime report is the next input needed to reconcile the file/dump
-discrepancy before implementing the live adapter.
+The diagnostic button remains read-only. After native installation, its input
+update window may show this module's hook; this is expected. It does not install
+or approve the trigger itself.
 
 ## Implementation status
 
-This change implements the testable firing state machine, target-query pipeline,
-session-only controls, independent dot rendering, dump reference layouts, and
-offline binary inspector. **It does not yet implement an active game adapter or
-install trigger hooks.** There are no approved binary profiles; enabling the UI
-switch stores a request and continues to show unavailable. The pure input helper
-can produce intents in tests, but nothing applies them to game input.
+The production ARM64 target now contains a native adapter for the supplied
+1.6.57 build. Startup verifies GNU build ID `1305bdeea30b989f` and all 49 compiled
+entrypoint fingerprints against readable executable mappings before installing
+four input/lifecycle hooks. Missing or changed code leaves firing disabled with
+an explicit status. Partial hook installation is rolled back; no settings flag
+or JSON file can bypass the validation.
 
-Remaining work includes native query and input adapters, verified live
-weapon-mode detection, viewport publication, lifecycle generation tracking,
-and device acceptance. The supplied binary has been inspected, but the runtime
-discrepancy above must be resolved before implementing those calls.
+The adapter merges its own press/hold/release source after native manual input
+capture and before the game's remaining input checks. Native input takes
+priority, ADS flags are preserved, and native cadence/bolt/reload gates remain
+in control. Target loss and invalid state revoke synthetic input. Lifecycle
+hooks and per-context generation counters prevent reuse across matches, pawns,
+weapons, components, and input controllers. Relevant native input hotfix paths
+are excluded; the adapter does not assume a patched delegate follows the
+inspected code flow. With trigger and dot disabled and no owned/pending input,
+the adapter takes an early path without weapon queries, camera construction,
+or physics. While active, single-shot acknowledgement uses a monotonic local
+bullet-creation sequence from the existing bullet callbacks, not the game's
+resettable per-fire-group shot count. The callbacks keep their prior aim logic
+and merely notify the current local component identity.
+
+A center ray from the active game camera first uses the native local bullet
+trace (`0x800A`), maps the nearest collider to its target, and invokes native
+avatar/legacy damage-collider refinement. A broad box alone is insufficient.
+Separate world and smoke queries cover the actual detailed hit segment. The
+pooled hit object is invocation-local and recycled exactly once. Camera viewport
+coordinates are published atomically to the dot renderer; game pointers stay
+on the game-input thread.
+
+Ordinary automatic and single-shot firearms are classified by their active
+component's firing properties. Base-weapon and COD-sniper input preparation
+handlers are recognized. A sniper's generic single-shot/release marker is not
+its effective firing mode: the native controller predicate determines whether
+that configuration actually requires release-to-fire. Down-triggered snipers
+can use repeated native single taps; true release-to-fire configurations remain
+unsupported.
+
+Cancellation never uses an up-edge while that edge could fire. It publishes a
+source-owned StopFire result after the native input calculation, with StartFire
+and public fire edges cleared, leaving aim flags unchanged. A context-keyed
+pending cleanup consumes a safe release before a fresh down if the same weapon
+returns to down-triggered mode. A second check after weapon input preparation
+catches mode/marker changes within the update. Cancellation tests cover these
+transitions, manual takeover, and context replacement.
+
+Burst, true release/charge, melee, special weapons, unreviewed input handlers,
+unknown states, and native basic auto-fire profiles are excluded. Manual fire
+remains available. Settings are session-only and start disabled.
+
+**Device acceptance is still pending for this connected build.** The screenshots
+validate code windows, not firing behavior or performance. Run the scenarios
+below before treating the feature as stable.
+
+Known conservative behavior:
+
+- An enemy's nearest broad collider that misses detailed body geometry ends
+  acquisition for that update; a farther enemy behind that envelope is not
+  searched. Exposed limbs and overlapping players need device verification.
+- The game's special smoke-cluster query can suppress a shot near smoke even
+  when the simple ray-volume test would be clear. It is retained because the
+  ordinary smoke-segment query skips that smoke type.
+- Entry-point checks reject conflicting hooks and code variants. The module
+  deliberately does not guess a replacement offset or bypass native profiles.
 
 ## Reproducible local checks
 
@@ -90,10 +145,9 @@ its existing preview state lacks `speed_min`, `speed_max`, and `HIDEESP`.
 Those unrelated preview definitions were left unchanged. No APK packaging,
 live game firing, frame-time benchmark, or device stability claim has been made.
 
-The compiled list of accepted native trigger profiles starts empty. The trigger
-must remain inactive until a matching binary profile has passed the checks below.
-Do not activate a profile based on a version string, executable address coverage,
-pointer plausibility, or a report from the inspector alone.
+The compiled native profile is specific to this supplied build. Do not add a
+new profile based only on a version string, executable coverage, or a structural
+inspection report; recheck the native ABI, call flow, and device behavior.
 
 ## Inspect the original library
 
@@ -181,4 +235,4 @@ memory use with trigger disabled. Require no crashes, stuck firing, unbounded
 per-frame allocations, or repeated expensive initialization. Save the binary
 inspection report and device evidence with the reviewed native profile. Until
 that evidence exists, the structural inspector remains a diagnostic tool and
-the compiled native profile list remains empty.
+a new or changed profile must remain disabled until its native validation passes.

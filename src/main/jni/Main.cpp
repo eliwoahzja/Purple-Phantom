@@ -1486,6 +1486,7 @@ static float speed_min = 0.5f;
 
 #include "UI/ApplicationUI.h"
 #include "Trigger/TriggerOverlay.h"
+#include "Trigger/NativeProfile.h"
 
 // Purple Phantom UI skin: visual styling only. This intentionally does not
 // change feature callbacks, state keys, rendering hooks, or feature logic.
@@ -1680,6 +1681,8 @@ void Init_Thread()
 
         sleep(1);
     }
+
+    PhantomTrigger::InitializeNativeTrigger(m_unity);
 
     // SkinHax kit: arm one-shot config collectors as soon as libunity is ready.
     // Install the full Mythic attachment runtime path early as well so live-match

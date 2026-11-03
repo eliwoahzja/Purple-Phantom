@@ -1,4 +1,5 @@
 #pragma once
+#include "Trigger/NativeDriver.h"
 #include "FTools/Iconcpp.h"
 #include "FTools/Font.h"
 #include "FTools/Icon.h"
@@ -195,6 +196,7 @@ uintptr_t GetInsideFOVTarget() {
 
 void ( * oWeaponFireComponent_Instant_CreateBulletLine)(uintptr_t thiz, Vector3 startPos, Vector3 dir, bool isDualFire);
 void WeaponFireComponent_Instant_CreateBulletLine(uintptr_t thiz, Vector3 startPos, Vector3 dir, bool isDualFire) {
+    PhantomTrigger::NotifyNativeShot(thiz);
     if (Config.Aim.AimSilent) {
 
         auto Gameplay_get_MatchGame = (uintptr_t( *)())(Class_Gameplay__get_MatchGame);
@@ -261,6 +263,7 @@ void WeaponFireComponent_Instant_CreateBulletLine(uintptr_t thiz, Vector3 startP
 
 void ( * oCreateBulletProjectile)(void * thiz, Vector3 startPos, Vector3 dir, void * weaponImpact, int itemID, int flySmokeAssetID, bool enableVirtualStartPos, Vector3 virtualStartPos);
 void CreateBulletProjectile(void * thiz, Vector3 startPos, Vector3 dir, void * weaponImpact, int itemID, int flySmokeAssetID, bool enableVirtualStartPos, Vector3 virtualStartPos) {
+    PhantomTrigger::NotifyNativeShot(reinterpret_cast<uintptr_t>(thiz));
     if (Config.Aim.AimSilent) {
         auto Gameplay_get_MatchGame = (uintptr_t( *)())(Class_Gameplay__get_MatchGame);
         auto get_MatchGame = Gameplay_get_MatchGame();

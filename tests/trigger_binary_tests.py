@@ -5,6 +5,7 @@ from pathlib import Path
 import struct
 import tempfile
 import unittest
+import re
 
 spec = importlib.util.spec_from_file_location(
     'inspector', Path(__file__).resolve().parents[1] / 'tools/inspect_trigger_binary.py')
@@ -27,6 +28,17 @@ def fixture():
 
 
 class BinaryInspectionTests(unittest.TestCase):
+    def test_native_dependencies_have_startup_fingerprints(self):
+        native = Path(__file__).resolve().parents[1] / 'src/main/jni/Trigger'
+        used = set()
+        for name in ('NativeDriver.cpp', 'NativeQueries.cpp'):
+            used.update(int(value, 16) for value in
+                        re.findall(r'\b0x[0-9a-fA-F]{7,8}\b', (native / name).read_text()))
+        checked = {int(value, 16) for value in
+                   re.findall(r'\b0x[0-9a-fA-F]{7,8}\b',
+                              (native / 'NativeProfileChecks.inc').read_text())}
+        self.assertFalse(used - checked, 'Native entrypoint lacks a startup code check')
+
     def test_identity_and_executable_candidate_are_only_structural(self):
         report = inspector.inspect(fixture(), 'synthetic.so')
         self.assertEqual(report['gnu_build_id'], '12345678')

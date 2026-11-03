@@ -1,5 +1,6 @@
 #include "Trigger/TriggerCompatibility.h"
 #include "Trigger/TriggerRuntime.h"
+#include "Trigger/NativeProfile.h"
 #include <array>
 #include <cassert>
 #include <cstdio>
@@ -9,6 +10,15 @@
 
 int main() {
     using namespace PhantomTrigger;
+    std::array<unsigned char, 24> note{{4,0,0,0,8,0,0,0,3,0,0,0,'G','N','U',0,
+                                      0x13,0x05,0xbd,0xee,0xa3,0x0b,0x98,0x9f}};
+    assert(NativeProfileDetail::MatchesBuildIdNote(note.data(),note.size()));
+    assert(!NativeProfileDetail::MatchesBuildIdNote(note.data(),note.size()-1));
+    note[16] ^= 1;
+    assert(!NativeProfileDetail::MatchesBuildIdNote(note.data(),note.size()));
+    assert(!NativeProfileDetail::MatchesBuildIdNote(nullptr,0));
+    note[0] = 255;
+    assert(!NativeProfileDetail::MatchesBuildIdNote(note.data(),note.size()));
     const std::array<unsigned char, 16> source{{1, 2, 3, 4}};
     std::array<unsigned char, 16> copy{};
     assert(CompatibilityDetail::ReadSelf(reinterpret_cast<std::uintptr_t>(source.data()),

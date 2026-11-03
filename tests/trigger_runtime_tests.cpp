@@ -1,5 +1,6 @@
 #include "Trigger/TriggerRuntime.h"
 #include "Trigger/TriggerDump1657.h"
+#include "Trigger/NativeCancellation.h"
 #include <cassert>
 #include <cstdio>
 #include <limits>
@@ -116,7 +117,6 @@ int main() {
     SetSettings({true, Mode::ADSOnly, true});
     const auto read = GetSettings();
     assert(read.enabled && read.mode == Mode::ADSOnly && read.showDot);
-    assert(ApprovedBinaryProfileCount == 0);
     assert(GetRuntimeStatus() == RuntimeStatus::WaitingForBinaryVerification);
     assert(GetDetectedFireMode() == FireMode::Unsupported);
     float x = 0, y = 0;
@@ -124,5 +124,36 @@ int main() {
     SetSettings({true, static_cast<Mode>(255), true});
     assert(!GetSettings().enabled); // Invalid settings cannot broaden ADS to Both.
     SetSettings({});
+    NativeCancellation cancellation;
+    const Intent up{false,false,true,false};
+    auto cancelled = cancellation.Resolve(identity,false,true,up);
+    assert(cancelled.stopResult && cancelled.input.passthrough);
+    assert(cancellation.HasPendingCleanup());
+    auto waiting = cancellation.Resolve(identity,false,true,{});
+    assert(!waiting.stopResult && waiting.input.passthrough);
+    const Intent down{true,true,false,false};
+    auto recover = cancellation.Resolve(identity,false,false,down);
+    assert(recover.input.up && !recover.input.down && recover.resetController);
+    assert(!cancellation.HasPendingCleanup());
+    auto resumed = cancellation.Resolve(identity,false,false,down);
+    assert(resumed.input.down && !resumed.resetController);
+    cancellation.Resolve(identity,false,true,up);
+    auto changed = identity;
+    ++changed.weapon;
+    auto newOwner = cancellation.Resolve(changed,false,false,down);
+    assert(newOwner.input.down && !newOwner.input.up && !newOwner.resetController);
+    cancellation.Resolve(identity,false,true,up);
+    auto manual = cancellation.Resolve(identity,true,false,up);
+    assert(manual.input.passthrough && !manual.stopResult);
+    assert(cancellation.Resolve(identity,false,false,down).input.down);
+    for (bool physical : {false,true}) {
+        for (const auto& candidate : {Intent{},up,down,Intent{true,false,false,false}}) {
+            cancellation.Reset();
+            const auto decision = cancellation.Resolve(identity,physical,true,candidate);
+            assert(!decision.input.up); // Cancellation can never become a release shot.
+            assert(!decision.input.down && !decision.input.held);
+            if (physical) assert(decision.input.passthrough && !decision.stopResult);
+        }
+    }
     std::puts("trigger runtime tests passed");
 }

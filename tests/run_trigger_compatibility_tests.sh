@@ -7,6 +7,7 @@ trap 'rm -rf -- "$task_build"' EXIT
     -fsanitize=address,undefined -fno-omit-frame-pointer -g \
     -I"$task_root/src/main/jni" "$task_root/tests/trigger_compatibility_tests.cpp" \
     "$task_root/src/main/jni/Trigger/TriggerCompatibility.cpp" \
+    "$task_root/src/main/jni/Trigger/NativeProfile.cpp" \
     "$task_root/src/main/jni/Trigger/TriggerRuntime.cpp" -ldl \
     -o "$task_build/trigger_compatibility_tests"
 "$task_build/trigger_compatibility_tests"

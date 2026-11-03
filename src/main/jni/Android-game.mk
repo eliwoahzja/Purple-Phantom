@@ -62,6 +62,9 @@ FILE_LIST += $(wildcard $(LOCAL_PATH)/libzip/*.c)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/*.c*)
 FILE_LIST += $(LOCAL_PATH)/Trigger/TriggerRuntime.cpp
 FILE_LIST += $(LOCAL_PATH)/Trigger/TriggerCompatibility.cpp
+FILE_LIST += $(LOCAL_PATH)/Trigger/NativeProfile.cpp
+FILE_LIST += $(LOCAL_PATH)/Trigger/NativeDriver.cpp
+FILE_LIST += $(LOCAL_PATH)/Trigger/NativeQueries.cpp
 
 LOCAL_SRC_FILES := $(FILE_LIST:$(LOCAL_PATH)/%=%) \
     Substrate/hde64.c \

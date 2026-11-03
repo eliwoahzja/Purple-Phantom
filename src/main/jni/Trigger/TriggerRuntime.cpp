@@ -4,6 +4,9 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#if defined(__ANDROID__) && !defined(STUDIO_STANDALONE_PREVIEW)
+#include "NativeDriver.h"
+#endif
 
 namespace PhantomTrigger {
 namespace {
@@ -80,29 +83,45 @@ void SetSettings(const Settings& settings) noexcept {
 }
 
 RuntimeStatus GetRuntimeStatus() noexcept {
-    // Deliberately no configuration flag, JSON manifest, RVA range check, or
-    // caller-provided hash can change this state. No profile is approved yet.
-    static_assert(ApprovedBinaryProfileCount == 0,
-                  "A native profile requires a reviewed runtime integration");
+#if defined(__ANDROID__) && !defined(STUDIO_STANDALONE_PREVIEW)
+    return NativeStatus();
+#else
     return RuntimeStatus::WaitingForBinaryVerification;
+#endif
 }
 
 const char* GetRuntimeStatusText() noexcept {
+#if defined(__ANDROID__) && !defined(STUDIO_STANDALONE_PREVIEW)
+    return NativeStatusText();
+#else
     return "Unavailable: native adapter verification pending";
+#endif
 }
 
 FireMode GetDetectedFireMode() noexcept {
+#if defined(__ANDROID__) && !defined(STUDIO_STANDALONE_PREVIEW)
+    return NativeDetectedMode();
+#else
     return FireMode::Unsupported;
+#endif
 }
 
 const char* GetDetectedFireModeText() noexcept {
-    return "Unavailable";
+    switch (GetDetectedFireMode()) {
+        case FireMode::Automatic: return "Automatic";
+        case FireMode::Single: return "Semi-auto / single shot";
+        default: return "Unsupported or unavailable";
+    }
 }
 
 bool GetViewportCenter(float& normalizedX, float& normalizedY) noexcept {
+#if defined(__ANDROID__) && !defined(STUDIO_STANDALONE_PREVIEW)
+    return NativeViewportCenter(normalizedX, normalizedY);
+#else
     normalizedX = 0.5f;
     normalizedY = 0.5f;
     return false;
+#endif
 }
 
 TargetResult EvaluateTarget(TargetQueries& queries,

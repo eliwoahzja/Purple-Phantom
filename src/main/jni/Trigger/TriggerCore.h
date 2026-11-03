@@ -70,6 +70,7 @@ struct Intent {
 // consumption; shotSerial acknowledges an actual accepted shot from that stream.
 class Controller {
 public:
+    bool HasOwnedInput() const noexcept { return phase_ == Phase::Held; }
     void Reset() noexcept {
         *this = Controller{};
     }

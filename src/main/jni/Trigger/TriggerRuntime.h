@@ -7,7 +7,7 @@
 namespace PhantomTrigger {
 
 // UI requests are one atomic snapshot. They cannot approve a binary or install
-// native hooks. There is currently no approved native binary profile.
+// native hooks. Production validates its compiled native profile at startup.
 Settings GetSettings() noexcept;
 void SetSettings(const Settings& settings) noexcept;
 
@@ -27,7 +27,6 @@ const char* GetDetectedFireModeText() noexcept;
 // Normalized coordinates use the top-left render origin. The fallback is the
 // screen center; false means no verified native camera viewport is available.
 bool GetViewportCenter(float& normalizedX, float& normalizedY) noexcept;
-constexpr std::size_t ApprovedBinaryProfileCount = 0;
 
 struct Point3 {
     float x = 0.0f;
@@ -84,7 +83,7 @@ TargetResult EvaluateTarget(TargetQueries& queries,
                             const ViewRay& ray) noexcept;
 
 // Pure adapter coordinator: computes an intent and never calls a native method,
-// installs a hook, publishes Ready, or approves bindings. The future compiled
+// installs a hook, publishes Ready, or approves bindings. The compiled native
 // binary profile must obtain a consistent local frame at its validated native
 // input boundary, call this once, then merge the result into native fire input.
 // frame.bindingsReady is input to a pure computation, not runtime activation.
