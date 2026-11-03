@@ -1,5 +1,7 @@
 #pragma once
 #include "StudioComponents.h"
+#include "../Trigger/TriggerRuntime.h"
+#include "../Trigger/TriggerCompatibility.h"
 #include <string>
 
 // UI only: the caller continues to own all values and feature callbacks.
@@ -15,7 +17,7 @@ static const char* PageDetails[]={"Player overlays and visibility", "Movement an
 static const char* Sections[][4]={
     {"OVERLAY","ADDITIONAL VISIBILITY","OVERLAY COLORS",nullptr},
     {"SNOWBOARD","SLIDE","SPEED","JUMP"},
-    {"ASSISTANCE","ADDITIONAL CONTROLS",nullptr,nullptr},
+    {"ASSISTANCE","TRIGGER","ADDITIONAL CONTROLS",nullptr},
     {"WEAPON HANDLING","MOVEMENT AND ITEMS",nullptr,nullptr},
     {"PERFORMANCE","WORKSPACE","RENDERING",nullptr},
     {"WEAPON SKINS",nullptr,nullptr,nullptr}
@@ -81,6 +83,29 @@ static void AimControls() {
     static const char* triggers[]={"Always","Fire","Scope"};
     Choice("Target",Config.Aim.Target,targets,2);
     Choice("Activation",Config.Aim.Trigger,triggers,3);
+    Section("TRIGGER");
+    auto triggerSettings=PhantomTrigger::GetSettings();
+    const auto previousMode=triggerSettings.mode;
+    bool triggerChanged=Toggle("Trigger bot",&triggerSettings.enabled);
+    static const char* triggerModes[]={"Both","ADS Only"};
+    Choice("Trigger mode",triggerSettings.mode,triggerModes,2);
+    triggerChanged|=triggerSettings.mode!=previousMode;
+    triggerChanged|=Toggle("Show center dot",&triggerSettings.showDot);
+    if(triggerChanged) PhantomTrigger::SetSettings(triggerSettings);
+    EndGrid();
+    ImGui::TextWrapped("Trigger: %s",PhantomTrigger::GetRuntimeStatusText());
+    ImGui::TextWrapped("Weapon mode: %s",PhantomTrigger::GetDetectedFireModeText());
+    if(ImGui::CollapsingHeader("Game compatibility")) {
+        static char compatibility[1400]="Run this check after entering a match, then share the report.";
+        if(ImGui::Button("Check game compatibility")) {
+            const auto report=PhantomTrigger::CaptureLoadedCompatibility();
+            PhantomTrigger::FormatCompatibility(report,compatibility,sizeof(compatibility));
+        }
+        ImGui::TextWrapped("%s",compatibility);
+    }
+    float viewportCenterX=.5f,viewportCenterY=.5f;
+    if(triggerSettings.showDot && !PhantomTrigger::GetViewportCenter(viewportCenterX,viewportCenterY))
+        ImGui::TextWrapped("The dot is a screen-center guide until the game viewport is verified.");
     Section("ADDITIONAL CONTROLS");
     // These existing keys intentionally retain the original label-to-state mapping.
     Toggle("Aimbot 360",&Config.Aim.Aimbot360);
@@ -168,7 +193,12 @@ static int EnabledCount(int page) {
             Config.ESPMenu.Vehicles+Config.ExtraMenu.Spectate+checkboxStates["wallhack"]+
             Config.ExtraMenu.Radar1+checkboxStates["BRTAGS"];
         case 1: return SnowB+SlideTackle+isSpeedHackEnabled+isJumpAdjustmentEnabled;
-        case 2: return Config.Aim.AimAssist+Config.Aim.Aimbot360+Config.Aim.AimSilent+Config.ExtraMenu.Revive+Config.ExtraMenu.Medicine;
+        case 2: {
+            const auto triggerSettings=PhantomTrigger::GetSettings();
+            return Config.Aim.AimAssist+Config.Aim.Aimbot360+Config.Aim.AimSilent+
+                Config.ExtraMenu.Revive+Config.ExtraMenu.Medicine+
+                triggerSettings.enabled+triggerSettings.showDot;
+        }
         case 3: return Config.ExtraMenu.Kinetic+Config.ExtraMenu.Recoil+Config.ExtraMenu.Spread+
             Config.ExtraMenu.Reload+Config.ExtraMenu.Scope+Config.ExtraMenu.Switch+Config.ExtraMenu.Shake+
             checkboxStates["AMMO"]+Config.ExtraMenu.Rpd+Config.ExtraMenu.Range+Config.ExtraMenu.AutoSnipe+
