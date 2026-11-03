@@ -7,6 +7,7 @@
 #include "imgui_impl_opengl3.h"
 #include "PreviewState.h"
 #include "UI/ApplicationUI.h"
+#include "Trigger/TriggerOverlay.h"
 
 namespace {
 using Clock = std::chrono::steady_clock;
@@ -80,6 +81,7 @@ Java_com_android_support_ImGuiView_nativeFrame(JNIEnv*, jclass, jint width, jint
     }
     ImGui_ImplOpenGL3_NewFrame();
     ImGui::NewFrame();
+    PhantomTrigger::DrawTriggerDot(ImGui::GetBackgroundDrawList(), (float)width, (float)height);
     StudioUI::Draw(); // The very same menu, fonts, custom drawing and widgets as Main.cpp.
     ImGui::Render();
     glViewport(0, 0, width, height);

@@ -1485,6 +1485,7 @@ static float speed_min = 0.5f;
 #include "Hacks/Feature/SkinHaxSystem.h"
 
 #include "UI/ApplicationUI.h"
+#include "Trigger/TriggerOverlay.h"
 
 // Purple Phantom UI skin: visual styling only. This intentionally does not
 // change feature callbacks, state keys, rendering hooks, or feature logic.
@@ -1628,6 +1629,7 @@ ImGui::NewFrame();
 StretchScreen::Apply(screenWidth, screenHeight);
 
 ImDrawList* draw = ImGui::GetBackgroundDrawList();
+PhantomTrigger::DrawTriggerDot(draw, screenWidth, screenHeight);
 DrawESP(draw, screenWidth, screenHeight, get_density());
 
 AimBot_Func();
