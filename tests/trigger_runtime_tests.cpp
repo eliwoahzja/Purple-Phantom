@@ -147,6 +147,69 @@ int main() {
     frame.aiming = frame.fullyAimed = true;
     assert(EvaluateInput(settings, frame, ray, q, controller).down);
 
+    // Waiting for a legal single tap needs no geometry, even with the dot on.
+    // Readiness becoming true must acquire and press in that very update.
+    const Settings singleSettings{true,Mode::Both,true};
+    Frame singleFrame = frame;
+    singleFrame.updateId = 1;
+    singleFrame.fireMode = FireMode::Single;
+    singleFrame.shotReady = false;
+    Controller singleController;
+    q = Queries{};
+    assert(!NeedsTargetQuery(singleSettings,singleFrame,singleController));
+    assert(EvaluateInput(singleSettings,singleFrame,ray,q,singleController).passthrough);
+    assert(q.traces == 0 && q.worlds == 0 && q.smokes == 0);
+    ++singleFrame.updateId;
+    singleFrame.shotReady = true;
+    assert(NeedsTargetQuery(singleSettings,singleFrame,singleController));
+    assert(EvaluateInput(singleSettings,singleFrame,ray,q,singleController).down);
+    assert(q.traces == 1 && q.worlds == 1 && q.smokes == 1);
+
+    // An owned single press still needs fresh visibility while cycling.
+    ++singleFrame.updateId;
+    singleFrame.shotReady = false;
+    q = Queries{};
+    q.smoke = Occlusion::Blocked;
+    assert(NeedsTargetQuery(singleSettings,singleFrame,singleController));
+    assert(EvaluateInput(singleSettings,singleFrame,ray,q,singleController).up);
+    assert(q.traces == 1 && q.smokes == 1);
+    ++singleFrame.updateId;
+    q = Queries{};
+    assert(EvaluateInput(singleSettings,singleFrame,ray,q,singleController).passthrough);
+    assert(q.traces == 0);
+    ++singleFrame.updateId;
+    singleFrame.shotReady = true;
+    assert(EvaluateInput(singleSettings,singleFrame,ray,q,singleController).down);
+
+    // Acknowledged single shots release before rearming, without querying
+    // during an unready rearm update or delaying the next ready update.
+    ++singleFrame.updateId;
+    ++singleFrame.shotSerial;
+    assert(EvaluateInput(singleSettings,singleFrame,ray,q,singleController).up);
+    ++singleFrame.updateId;
+    singleFrame.shotReady = false;
+    q = Queries{};
+    assert(EvaluateInput(singleSettings,singleFrame,ray,q,singleController).passthrough);
+    assert(q.traces == 0);
+    ++singleFrame.updateId;
+    singleFrame.shotReady = true;
+    assert(EvaluateInput(singleSettings,singleFrame,ray,q,singleController).down);
+    assert(q.traces == 1);
+
+    // Automatic cadence must keep acquisition and visibility checks active.
+    Controller automaticController;
+    Frame automaticFrame = frame;
+    automaticFrame.updateId = 1;
+    automaticFrame.shotReady = false;
+    q = Queries{};
+    assert(EvaluateInput(singleSettings,automaticFrame,ray,q,automaticController).down);
+    ++automaticFrame.updateId;
+    assert(EvaluateInput(singleSettings,automaticFrame,ray,q,automaticController).held);
+    assert(q.traces == 2 && q.worlds == 2 && q.smokes == 2);
+    ++automaticFrame.updateId;
+    q.world = Occlusion::Blocked;
+    assert(EvaluateInput(singleSettings,automaticFrame,ray,q,automaticController).up);
+
     SetSettings({true, Mode::ADSOnly, true});
     const auto read = GetSettings();
     assert(read.enabled && read.mode == Mode::ADSOnly && read.showDot);

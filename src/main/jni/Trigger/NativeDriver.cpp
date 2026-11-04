@@ -129,6 +129,18 @@ void Merge(void* param, const Intent& intent) noexcept {
     At<BoolSetter>(0xA81F8A8)(param, intent.up, nullptr);
 }
 
+bool PrepareViewRay(bool needed, ViewRay& ray) noexcept {
+    float centerX = .5f, centerY = .5f;
+    const bool ready = needed && BuildNativeRay(library,ray,centerX,centerY);
+    if (ready) {
+        std::uint32_t x = 0, y = 0;
+        std::memcpy(&x,&centerX,sizeof(x)); std::memcpy(&y,&centerY,sizeof(y));
+        viewport.store((static_cast<std::uint64_t>(x)<<32)|y,std::memory_order_relaxed);
+    }
+    viewportValid.store(ready,std::memory_order_release);
+    return ready;
+}
+
 void Buttons(void* unit, void* param, Metadata metadata) {
     originalButtons(unit, param, metadata);
     if (installation.load(std::memory_order_acquire) != 2 ||
@@ -138,15 +150,16 @@ void Buttons(void* unit, void* param, Metadata metadata) {
         Field<std::uintptr_t>(controller, 0x50) != reinterpret_cast<std::uintptr_t>(unit)) return;
     local.seen = true;
     const auto settings = GetSettings();
-    if (!settings.enabled && !settings.showDot && !local.controller.HasOwnedInput() &&
+    if (!settings.enabled && !local.controller.HasOwnedInput() &&
         !local.cancellation.HasPendingCleanup()) {
         local.controller.Reset();
         local.hasFrame = false;
         status.store(RuntimeStatus::Disabled,std::memory_order_release);
         reason.store("Disabled",std::memory_order_release);
         detected.store(FireMode::Unsupported,std::memory_order_release);
-        viewportValid.store(false,std::memory_order_release);
         observedComponent.store(0,std::memory_order_release);
+        ViewRay ray;
+        PrepareViewRay(settings.showDot,ray);
         return;
     }
     const auto pawn = Field<std::uintptr_t>(controller, 0x70);
@@ -248,14 +261,8 @@ void Buttons(void* unit, void* param, Metadata metadata) {
          (release ? "Release-to-fire mode is unsupported" :
           (burst ? "Burst mode is unsupported" : "Ready"))),std::memory_order_release);
     ViewRay ray;
-    float centerX = .5f, centerY = .5f;
-    const bool rayReady = BuildNativeRay(library,ray,centerX,centerY);
-    if (rayReady) {
-        std::uint32_t x = 0, y = 0;
-        std::memcpy(&x,&centerX,sizeof(x)); std::memcpy(&y,&centerY,sizeof(y));
-        viewport.store((static_cast<std::uint64_t>(x)<<32)|y,std::memory_order_relaxed);
-    }
-    viewportValid.store(rayReady,std::memory_order_release);
+    const bool rayReady = PrepareViewRay(settings.showDot ||
+        NeedsTargetQuery(settings,frame,local.controller),ray);
     frame.contextValid = frame.contextValid && rayReady;
     NativeTargetQueries queries(library,match,pawn);
     const auto intent = EvaluateInput(settings,frame,ray,queries,local.controller);

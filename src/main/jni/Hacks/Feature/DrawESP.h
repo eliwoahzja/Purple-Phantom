@@ -652,27 +652,31 @@ if (Config.ESPMenu.Box) {
                         if (Config.ESPMenu.Health) {
                             auto m_AttackableInfo = * (uintptr_t *)(Pawn + Class_AttackableTarget__m_AttackableInfo);
                             if (m_AttackableInfo) {
-                                int CurHP = (int) * (float *)(m_AttackableInfo + Class_AttackableTarget__m_Health);
-                                int MaxHP = (int) * (float *)(m_AttackableInfo + Class_AttackableTarget__m_MaxHealth);
+                                const float currentHP = *(float *)(m_AttackableInfo + Class_AttackableTarget__m_Health);
+                                const float maxHP = *(float *)(m_AttackableInfo + Class_AttackableTarget__m_MaxHealth);
+                                const float headY = sHeight - HeadSc.y;
+                                const float rootY = sHeight - RootSc.y;
+                                const float barHeight = fabsf(rootY - headY);
+                                if (std::isfinite(currentHP) && std::isfinite(maxHP) && maxHP > 0.f &&
+                                    std::isfinite(HeadSc.x) && std::isfinite(headY) &&
+                                    std::isfinite(rootY) && std::isfinite(barHeight) && barHeight > 0.f) {
+                                    const float fraction = std::max(0.f, std::min(currentHP / maxHP, 1.f));
+                                    const ImU32 HPColor = IM_COL32(
+                                        (int)std::min(510.f * (1.f - fraction), 255.f),
+                                        (int)std::min(510.f * fraction, 255.f), 0, 155);
+                                    const float barWidth = 4.f;
+                                    const float gap = 4.f;
+                                    const float left = HeadSc.x - barHeight * 0.65f / 2.f - gap - barWidth;
+                                    const ImVec2 topLeft(left, std::min(headY, rootY));
+                                    const ImVec2 bottomRight(left + barWidth, std::max(headY, rootY));
 
-                                long HPColor = IM_COL32(std::min(((510 * (MaxHP - CurHP)) / MaxHP), 255), std::min(((510 * CurHP) / MaxHP), 255), 0, 155);
-
-                                float boxWidth = density / 1.6f;
-                                boxWidth -= std::min(((boxWidth / 2) / 00.0f) * Distance,
-                                                     boxWidth / 2);
-                                float boxHeight = boxWidth * 0.07f;
-
-                                ImVec2 vStart = {HeadSc.x - (boxWidth / 2),
-                                                 sHeight - HeadSc.y - (boxHeight * 2.1f)
-                                                };
-
-                                ImVec2 vEndFilled = {vStart.x + (CurHP * boxWidth / MaxHP),
-                                                     vStart.y + boxHeight
-                                                    };
-                                ImVec2 vEndRect = {vStart.x + boxWidth, vStart.y + boxHeight};
-
-                                draw->AddRectFilled(vStart, vEndFilled, HPColor);
-                                draw->AddRect(vStart, vEndRect, IM_COL32(0, 0, 0, 155));
+                                    draw->AddRectFilled(topLeft, bottomRight, IM_COL32(0, 0, 0, 155));
+                                    if (fraction > 0.f) {
+                                        draw->AddRectFilled(
+                                            ImVec2(left, bottomRight.y - barHeight * fraction), bottomRight, HPColor);
+                                    }
+                                    draw->AddRect(topLeft, bottomRight, IM_COL32(0, 0, 0, 155));
+                                }
                             }
                         }
 

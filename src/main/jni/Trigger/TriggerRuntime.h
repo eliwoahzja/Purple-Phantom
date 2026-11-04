@@ -82,6 +82,12 @@ TargetResult EvaluateTarget(TargetQueries& queries,
                             const ContextIdentity& context,
                             const ViewRay& ray) noexcept;
 
+// Share the acquisition gate with the native adapter so an ineligible update
+// needs neither camera construction nor physics. Owned input still requires
+// fresh visibility checks, including while a single-shot weapon is cycling.
+bool NeedsTargetQuery(const Settings& settings, const Frame& frame,
+                      const Controller& controller) noexcept;
+
 // Pure adapter coordinator: computes an intent and never calls a native method,
 // installs a hook, publishes Ready, or approves bindings. The compiled native
 // binary profile must obtain a consistent local frame at its validated native

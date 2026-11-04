@@ -66,9 +66,14 @@ in control. Target loss and invalid state revoke synthetic input. Lifecycle
 hooks and per-context generation counters prevent reuse across matches, pawns,
 weapons, components, and input controllers. Relevant native input hotfix paths
 are excluded; the adapter does not assume a patched delegate follows the
-inspected code flow. With trigger and dot disabled and no owned/pending input,
-the adapter takes an early path without weapon queries, camera construction,
-or physics. While active, single-shot acknowledgement uses a monotonic local
+inspected code flow. With the trigger disabled and no owned/pending input,
+the adapter skips weapon queries and physics; a visible dot updates only its
+camera ray/viewport. With the dot hidden it also skips camera construction.
+While enabled, camera construction is skipped if neither the dot nor target
+acquisition needs it. Idle/rearming single-shot weapons skip acquisition until
+ready; owned presses and automatic fire retain per-update visibility checks.
+The first eligible update still queries immediately, without a cache or timer.
+Single-shot acknowledgement uses a monotonic local
 bullet-creation sequence from the existing bullet callbacks, not the game's
 resettable per-fire-group shot count. The callbacks keep their prior aim logic
 and merely notify the current local component identity.

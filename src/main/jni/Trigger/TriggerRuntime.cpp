@@ -144,6 +144,20 @@ TargetResult EvaluateTarget(TargetQueries& queries,
     return TargetResult::Eligible;
 }
 
+bool NeedsTargetQuery(const Settings& settings, const Frame& frame,
+                      const Controller& controller) noexcept {
+    const bool modeReady = settings.mode == Mode::Both ||
+                           (settings.mode == Mode::ADSOnly && frame.aiming && frame.fullyAimed);
+    const bool automatic = frame.fireMode == FireMode::Automatic ||
+                           frame.fireMode == FireMode::BurstAutomatic;
+    const bool single = frame.fireMode == FireMode::Single ||
+                        frame.fireMode == FireMode::BurstSingle;
+    return settings.enabled && frame.contextValid && frame.bindingsReady &&
+           !frame.manualActive && frame.ammoAvailable && !frame.hardBlocked &&
+           modeReady && (automatic || (single &&
+               (frame.shotReady || controller.HasOwnedInput())));
+}
+
 Intent EvaluateInput(const Settings& settings, const Frame& input,
                      const ViewRay& ray, TargetQueries& queries,
                      Controller& controller) noexcept {
@@ -151,11 +165,7 @@ Intent EvaluateInput(const Settings& settings, const Frame& input,
     // Never trust a prefilled targetValid bit from an adapter. The final target
     // decision always includes detailed intersection, world LOS, and smoke.
     frame.targetValid = false;
-    const bool modeReady = settings.mode == Mode::Both ||
-                           (settings.mode == Mode::ADSOnly && frame.aiming && frame.fullyAimed);
-    if (settings.enabled && frame.contextValid && frame.bindingsReady &&
-        !frame.manualActive && frame.ammoAvailable && !frame.hardBlocked &&
-        frame.fireMode != FireMode::Unsupported && modeReady) {
+    if (NeedsTargetQuery(settings,frame,controller)) {
         frame.targetValid = EvaluateTarget(queries, frame.identity, ray) == TargetResult::Eligible;
     }
     return controller.Step(settings, frame);
