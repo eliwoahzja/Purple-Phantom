@@ -20,6 +20,7 @@
 
 
 #include "configs.h"
+#include "Movement/MovementRuntime.h"
 #include "saved.h"
 #include "Hacks/Hacks.h"
 #include "foxcheats/include/ScanEngine.hpp"
@@ -1683,6 +1684,7 @@ void Init_Thread()
     }
 
     PhantomTrigger::InitializeNativeTrigger(m_unity);
+    PhantomMovement::InitializeNativeMovement(m_unity);
 
     // SkinHax kit: arm one-shot config collectors as soon as libunity is ready.
     // Install the full Mythic attachment runtime path early as well so live-match

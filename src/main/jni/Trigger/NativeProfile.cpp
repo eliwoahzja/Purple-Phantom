@@ -23,11 +23,7 @@ bool NativeProfileDetail::MatchesBuildIdNote(const unsigned char* data,
 
 #if defined(__ANDROID__) && defined(__aarch64__) && !defined(STUDIO_STANDALONE_PREVIEW)
 namespace {
-struct CodeCheck {
-    const char* failure;
-    std::uintptr_t rva;
-    std::array<unsigned char, 16> expected;
-};
+using NativeProfileDetail::CodeCheck;
 #include "NativeProfileChecks.inc"
 
 bool Range(const dl_phdr_info& info, std::uintptr_t rva,
@@ -42,6 +38,8 @@ bool Range(const dl_phdr_info& info, std::uintptr_t rva,
 }
 struct Validation {
     std::uintptr_t base;
+    const CodeCheck* checks;
+    std::size_t count;
     bool valid = false;
     const char* failure = "The loaded game library could not be identified";
 };
@@ -64,7 +62,8 @@ int Validate(dl_phdr_info* info, std::size_t, void* argument) noexcept {
         state.failure = "Unsupported game library build ID";
         return 1;
     }
-    for (const auto& check : checks) {
+    for (std::size_t i = 0; i < state.count; ++i) {
+        const auto& check = state.checks[i];
         std::array<unsigned char, 16> actual{};
         if (check.rva > std::numeric_limits<std::uintptr_t>::max() - state.base ||
             !Range(*info, check.rva, actual.size(), PF_R | PF_X) ||
@@ -80,14 +79,29 @@ int Validate(dl_phdr_info* info, std::size_t, void* argument) noexcept {
 }
 #endif
 
+bool NativeProfileDetail::ValidateEntrypoints(std::uintptr_t base,
+        const CodeCheck* requested, std::size_t count, const char*& failure) noexcept {
+    failure = "Native profile verification unavailable";
+#if defined(__ANDROID__) && defined(__aarch64__) && !defined(STUDIO_STANDALONE_PREVIEW)
+    if (!base || !requested || count == 0) return false;
+    Validation validation{base,requested,count};
+    dl_iterate_phdr(Validate, &validation);
+    failure = validation.valid ? nullptr : validation.failure;
+    return validation.valid;
+#else
+    (void)base; (void)requested; (void)count;
+    return false;
+#endif
+}
+
 void InitializeNativeTrigger(std::uintptr_t base) noexcept {
 #if defined(__ANDROID__) && defined(__aarch64__) && !defined(STUDIO_STANDALONE_PREVIEW)
     static std::atomic<bool> attempted{false};
     if (!base || attempted.exchange(true, std::memory_order_acq_rel)) return;
-    Validation validation{base};
-    dl_iterate_phdr(Validate, &validation);
-    if (!validation.valid) {
-        NativeDriverFailure(validation.failure);
+    const char* failure = nullptr;
+    if (!NativeProfileDetail::ValidateEntrypoints(base,checks,
+            sizeof(checks)/sizeof(checks[0]),failure)) {
+        NativeDriverFailure(failure);
         return;
     }
     InstallNativeDriver(base);

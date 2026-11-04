@@ -7,6 +7,7 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH) $(LOCAL_PATH)/ImGui
 LOCAL_SRC_FILES := Preview/PreviewNative.cpp \
     Trigger/TriggerRuntime.cpp \
     Trigger/TriggerCompatibility.cpp \
+    Movement/MovementRuntime.cpp \
     ImGui/imgui.cpp ImGui/imgui_draw.cpp ImGui/imgui_tables.cpp \
     ImGui/imgui_widgets.cpp ImGui/imgui_impl_opengl3.cpp
 LOCAL_LDLIBS := -lGLESv3 -llog

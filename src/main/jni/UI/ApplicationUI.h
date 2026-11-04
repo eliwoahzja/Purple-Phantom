@@ -2,6 +2,7 @@
 #include "StudioComponents.h"
 #include "../Trigger/TriggerRuntime.h"
 #include "../Trigger/TriggerCompatibility.h"
+#include "../Movement/MovementRuntime.h"
 #include <string>
 
 // UI only: the caller continues to own all values and feature callbacks.
@@ -14,9 +15,9 @@ static const char* Pages[]={"Visuals","Movement","Aim","Memory","System","SkinHa
 static const char* PageDetails[]={"Player overlays and visibility", "Movement and travel controls",
     "Assistance and targeting", "Weapon handling and items", "Performance and appearance",
     "Weapon skins and Mythic attachments"};
-static const char* Sections[][4]={
+static const char* Sections[][5]={
     {"OVERLAY","ADDITIONAL VISIBILITY","OVERLAY COLORS",nullptr},
-    {"SNOWBOARD","SLIDE","SPEED","JUMP"},
+    {"SNOWBOARD","SLIDE","SPEED","JUMP","STANCE AND FIRING"},
     {"ASSISTANCE","TRIGGER","ADDITIONAL CONTROLS",nullptr},
     {"WEAPON HANDLING","MOVEMENT AND ITEMS",nullptr,nullptr},
     {"PERFORMANCE","WORKSPACE","RENDERING",nullptr},
@@ -72,6 +73,16 @@ if (showSpeedHackSlider)
     Section("JUMP");
     if(Toggle("High jump",&isJumpAdjustmentEnabled) && !isJumpAdjustmentEnabled) jumpHeightMultiplier=1;
     if(isJumpAdjustmentEnabled) Slider("Jump multiplier",&jumpHeightMultiplier,.5f,5,"%.1fx");
+    Section("STANCE AND FIRING");
+    auto movementSettings=PhantomMovement::GetSettings();
+    bool movementChanged=Toggle("No crouch",&movementSettings.noCrouch);
+    movementChanged|=Toggle("No sprint-to-fire delay",&movementSettings.noSprintToFireDelay);
+    if(movementChanged) PhantomMovement::SetSettings(movementSettings);
+    EndGrid();
+    if(movementSettings.noCrouch)
+        ImGui::TextWrapped("No crouch: %s",PhantomMovement::GetNoCrouchStatusText());
+    if(movementSettings.noSprintToFireDelay)
+        ImGui::TextWrapped("Sprint-to-fire: %s",PhantomMovement::GetSprintToFireStatusText());
 }
 static void AimControls() {
     Section("ASSISTANCE");
@@ -192,7 +203,11 @@ static int EnabledCount(int page) {
             Config.ESPMenu.Health+Config.ESPMenu.Name+Config.ESPMenu.Distance+Config.ESPMenu.Alert+
             Config.ESPMenu.Vehicles+Config.ExtraMenu.Spectate+checkboxStates["wallhack"]+
             Config.ExtraMenu.Radar1+checkboxStates["BRTAGS"];
-        case 1: return SnowB+SlideTackle+isSpeedHackEnabled+isJumpAdjustmentEnabled;
+        case 1: {
+            const auto movementSettings=PhantomMovement::GetSettings();
+            return SnowB+SlideTackle+isSpeedHackEnabled+isJumpAdjustmentEnabled+
+                movementSettings.noCrouch+movementSettings.noSprintToFireDelay;
+        }
         case 2: {
             const auto triggerSettings=PhantomTrigger::GetSettings();
             return Config.Aim.AimAssist+Config.Aim.Aimbot360+Config.Aim.AimSilent+
@@ -386,7 +401,7 @@ static void NavigationSheet() {
             ImGui::Spacing();
             ImGui::Text("%s sections",Pages[Page]);
             if(ImGui::BeginTable("##sections",narrow?1:2,ImGuiTableFlags_SizingStretchSame)) {
-                for(int i=0;i<4 && Sections[Page][i];++i) {
+                for(int i=0;i<static_cast<int>(sizeof(Sections[Page])/sizeof(Sections[Page][0])) && Sections[Page][i];++i) {
                     ImGui::TableNextColumn();
                     if(Button(Sections[Page][i],ImVec2(-1,S(42)))) {
                         PendingSection=Sections[Page][i]; NavigationOpen=false;

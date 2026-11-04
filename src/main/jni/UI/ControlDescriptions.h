@@ -27,6 +27,8 @@ static const char* Description(const char* label) {
         {"Speed multiplier", "Set the movement-speed multiplier."},
         {"High jump", "Enable jump adjustment. Turning off resets it to 1x."},
         {"Jump multiplier", "Set the jump-height multiplier."},
+        {"No crouch", "Block crouch input for your local player."},
+        {"No sprint-to-fire delay", "Remove the sprint-specific firing penalty. Normal weapon cadence still applies."},
         {"Aimlock", "Enable the existing aim-assistance control."},
         {"Smoothness", "Adjust the aim-assistance value."},
         {"Field of view", "Set the targeting field-of-view value."},
