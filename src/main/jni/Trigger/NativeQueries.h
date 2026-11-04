@@ -6,7 +6,7 @@
 namespace PhantomTrigger {
 
 // Called only by the validated native input adapter on the game thread. The
-// caller supplies the current weapon's supported trace range in maxDistance.
+// detection span comes from that same camera's visible clip depth.
 bool BuildNativeRay(std::uintptr_t base, ViewRay& ray,
                     float& normalizedX, float& normalizedY) noexcept;
 

@@ -1,6 +1,7 @@
 #include "Trigger/TriggerRuntime.h"
 #include "Trigger/TriggerDump1657.h"
 #include "Trigger/NativeCancellation.h"
+#include "Trigger/TriggerRange.h"
 #include <cassert>
 #include <cstdio>
 #include <limits>
@@ -25,11 +26,43 @@ struct Queries final : TargetQueries {
 };
 
 int main() {
+    assert(VisibleTraceDistance(.25f,8000.f) == 7999.75f);
+    assert(VisibleTraceDistance(0.f,100.f) == 100.f);
+    for (float invalid : {-1.f,0.f,std::numeric_limits<float>::infinity(),
+                          std::numeric_limits<float>::quiet_NaN()}) {
+        assert(VisibleTraceDistance(.25f,invalid) == 0.f);
+    }
+    assert(VisibleTraceDistance(-1.f,8000.f) == 0.f);
+    assert(VisibleTraceDistance(100.f,100.f) == 0.f);
+    assert(VisibleTraceDistance(101.f,100.f) == 0.f);
     const ViewRay ray{{0, 0, 0}, {0, 0, 1}, 500};
     const ContextIdentity identity{1, 2, 3, 4, 5};
     Queries q;
     assert(EvaluateTarget(q, identity, ray) == TargetResult::Eligible);
     assert(q.traces == 1 && q.worlds == 1 && q.smokes == 1);
+
+    // Close and distant body hits share the exact same detection/visibility
+    // pipeline. Detection must not inherit a short weapon trace distance.
+    ViewRay visibleRay = ray;
+    visibleRay.maxDistance = VisibleTraceDistance(.25f,8000.f);
+    for (float distance : {.5f,10.f,100.f,500.f,1500.f,5000.f,7999.f}) {
+        Queries distant;
+        distant.body.point = {0,0,distance};
+        distant.body.distance = distance;
+        assert(EvaluateTarget(distant,identity,visibleRay) == TargetResult::Eligible);
+        distant.world = Occlusion::Blocked;
+        assert(EvaluateTarget(distant,identity,visibleRay) == TargetResult::WorldBlocked);
+        distant.world = Occlusion::Clear;
+        distant.smoke = Occlusion::Blocked;
+        assert(EvaluateTarget(distant,identity,visibleRay) == TargetResult::SmokeBlocked);
+        distant.smoke = Occlusion::Clear;
+        distant.body.point.x = .1f;
+        assert(EvaluateTarget(distant,identity,visibleRay) == TargetResult::InvalidHit);
+    }
+    Queries beyondView;
+    beyondView.body.point = {0,0,8001};
+    beyondView.body.distance = 8001;
+    assert(EvaluateTarget(beyondView,identity,visibleRay) == TargetResult::InvalidHit);
 
     for (auto member : {&BodyHit::hit, &BodyHit::enemy, &BodyHit::alive,
                         &BodyHit::detailed, &BodyHit::nearest}) {

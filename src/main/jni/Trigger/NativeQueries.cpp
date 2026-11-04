@@ -1,4 +1,5 @@
 #include "NativeQueries.h"
+#include "TriggerRange.h"
 
 #include <algorithm>
 #include <cmath>
@@ -80,9 +81,15 @@ bool BodyGroup(int group, bool avatar) noexcept {
 bool BuildNativeRay(Address base, ViewRay& ray,
                     float& normalizedX, float& normalizedY) noexcept {
     normalizedX = normalizedY = 0.5f;
-    if (!base || !std::isfinite(ray.maxDistance) || ray.maxDistance <= 0) return false;
+    ray.maxDistance = 0.f;
+    if (!base) return false;
     const auto camera = Bind<Object(*)(Object, Method)>(base, 0x5024010)(nullptr, nullptr);
     if (!camera) return false;
+    using ClipGetter = float(*)(Object, Method);
+    const float nearPlane = Bind<ClipGetter>(base, 0x5021FC4)(camera, nullptr);
+    const float farPlane = Bind<ClipGetter>(base, 0x502200C)(camera, nullptr);
+    const float detectionDistance = VisibleTraceDistance(nearPlane, farPlane);
+    if (detectionDistance <= 0.f) return false;
     const Point3 center{0.5f, 0.5f, 0};
     const auto native = Bind<NativeRay(*)(Object, Point3, Method)>(base, 0x5023E78)(camera, center, nullptr);
     if (!Finite(native.origin) || !Finite(native.direction)) return false;
@@ -100,6 +107,7 @@ bool BuildNativeRay(Address base, ViewRay& ray,
         normalizedX < 0 || normalizedX > 1 || normalizedY < 0 || normalizedY > 1) return false;
     const float inverseLength = static_cast<float>(1.0 / std::sqrt(lengthSquared));
     ray.origin = native.origin;
+    ray.maxDistance = detectionDistance;
     ray.direction = {native.direction.x * inverseLength,
                      native.direction.y * inverseLength,
                      native.direction.z * inverseLength};

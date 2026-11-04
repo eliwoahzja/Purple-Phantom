@@ -53,7 +53,7 @@ or approve the trigger itself.
 ## Implementation status
 
 The production ARM64 target now contains a native adapter for the supplied
-1.6.57 build. Startup verifies GNU build ID `1305bdeea30b989f` and all 49 compiled
+1.6.57 build. Startup verifies GNU build ID `1305bdeea30b989f` and all 50 compiled
 entrypoint fingerprints against readable executable mappings before installing
 four input/lifecycle hooks. Missing or changed code leaves firing disabled with
 an explicit status. Partial hook installation is rolled back; no settings flag
@@ -74,9 +74,12 @@ resettable per-fire-group shot count. The callbacks keep their prior aim logic
 and merely notify the current local component identity.
 
 A center ray from the active game camera first uses the native local bullet
-trace (`0x800A`), maps the nearest collider to its target, and invokes native
+trace (`0x800A`) across the camera's visible clip depth (`farClip - nearClip`), maps the nearest collider to its target, and invokes native
 avatar/legacy damage-collider refinement. A broad box alone is insufficient.
-Separate world and smoke queries cover the actual detailed hit segment. The
+Detection is independent of the weapon's authored trace range, so nearby and
+distant visible enemies follow the same eligibility rule. Native weapon travel
+and firing rules remain game-controlled. Separate world and smoke queries cover
+the actual detailed hit segment. The
 pooled hit object is invocation-local and recycled exactly once. Camera viewport
 coordinates are published atomically to the dot renderer; game pointers stay
 on the game-input thread.

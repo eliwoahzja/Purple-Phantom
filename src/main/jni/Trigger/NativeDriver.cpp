@@ -248,10 +248,8 @@ void Buttons(void* unit, void* param, Metadata metadata) {
          (release ? "Release-to-fire mode is unsupported" :
           (burst ? "Burst mode is unsupported" : "Ready"))),std::memory_order_release);
     ViewRay ray;
-    ray.maxDistance = At<FloatGetter>(0x50EE1F8)(weapon,nullptr);
     float centerX = .5f, centerY = .5f;
-    const bool rayReady = std::isfinite(ray.maxDistance) && ray.maxDistance > .01f &&
-        BuildNativeRay(library,ray,centerX,centerY);
+    const bool rayReady = BuildNativeRay(library,ray,centerX,centerY);
     if (rayReady) {
         std::uint32_t x = 0, y = 0;
         std::memcpy(&x,&centerX,sizeof(x)); std::memcpy(&y,&centerY,sizeof(y));
