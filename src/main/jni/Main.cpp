@@ -1729,7 +1729,6 @@ void Init_Thread()
 	DobbyHook((void*)getAbsoluteAddress("libunity.so", 0x9FE01CC), (void*)GetFrameRateValue, (void**)&orig_GetFrameRateValue);
     DobbyHook((void*)getAbsoluteAddress("libunity.so", 0x9FDFB38), (void*)GetUltraFrameRateFinalFPS, (void**)&orig_GetUltraFrameRateFinalFPS);
     DobbyHook((void*)getAbsoluteAddress("libunity.so", 0x9FDF8E0), (void*)hooked_Fpslevel, (void**)&original_Fpslevel);
-    DobbyHook((void*)getAbsoluteAddress("libunity.so", 0x9FDF8E0), (void*)hooked_Fpslevel1, (void**)&original_Fpslevel1);
     DobbyHook((void*)getAbsoluteAddress("libunity.so", 0x9FE3FB4), (void*)hooked_Extremequality, (void**)&original_Extremequality);
     DobbyHook((void*)getAbsoluteAddress("libunity.so", 0x9FDEE28), (void*)hooked_SetUltraFrameRateDeviceInfo, (void**)&orig_SetUltraFrameRateDeviceInfo);
 	
@@ -1807,8 +1806,6 @@ void Init_Thread()
     HOOK_LIB("libunity.so", "0x522860C", hooked_get_m_PhysSkisMaxSpeed, get_m_PhysSkisMaxSpeed);
     HOOK_LIB("libunity.so", "0x51D2EB8", hooked_CalcFinalMoveScale, original_CalcFinalMoveScale);
 	
-    DobbyHook((void*) getAbsoluteAddress("libunity.so", 0x9FDEE28), (void*)&hooked_SetUltraFrameRateDeviceInfo, (void**)&orig_SetUltraFrameRateDeviceInfo);
-    
 	
     auto swapBuffers = ((uintptr_t) DobbySymbolResolver(OBFUSCATE("libunity.so"), OBFUSCATE("eglSwapBuffers")));
     KittyMemory::ProtectAddr((void *)swapBuffers, sizeof(swapBuffers), PROT_READ | PROT_WRITE | PROT_EXEC);

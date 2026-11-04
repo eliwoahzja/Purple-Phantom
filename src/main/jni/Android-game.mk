@@ -40,7 +40,9 @@ LOCAL_CPPFLAGS := -std=c++17 -DIMGUI_IMPL_OPENGL_ES3 -Wno-error=format-security 
     -ffunction-sections -fdata-sections -w -Wno-error=c++11-narrowing \
     -fms-extensions -fno-rtti -fpermissive
 LOCAL_CPP_FEATURES := exceptions
-LOCAL_LDFLAGS := -Wl,--gc-sections,--strip-all
+# Retain debug information in NDK_OUT for native crash symbolication. The NDK
+# strips the installed NDK_LIBS_OUT library separately.
+LOCAL_LDFLAGS := -Wl,--gc-sections
 LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) \

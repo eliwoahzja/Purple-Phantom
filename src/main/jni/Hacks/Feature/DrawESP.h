@@ -514,12 +514,6 @@ ApplySpeedhack();
                 auto m_PlayerInfo = *(uintptr_t *)(Pawn + Class_Pawn__m_PlayerInfo);
                 if (!m_PlayerInfo) continue; // Skip if player info is missing.
 
-                auto m_AttackableInfo = *(uintptr_t *)(m_PlayerInfo + Class_AttackableTarget__m_AttackableInfo);
-
-                // Directly fetch health values.
-                int CurHP = (int)*(float *)(m_AttackableInfo + Class_AttackableTarget__m_Health);
-                int MaxHP = (int)*(float *)(m_AttackableInfo + Class_AttackableTarget__m_MaxHealth);
-
                 auto m_HeadBone = *(Transform **)(Pawn + Class_Pawn__m_HeadBone);
                 auto m_Mesh = *(Transform **)(Pawn + Class_Pawn__m_Mesh);
 
