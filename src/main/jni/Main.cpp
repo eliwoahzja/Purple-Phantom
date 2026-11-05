@@ -1656,8 +1656,16 @@ ImGui::Render();
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------
+enum class StartupProfileState { Pending, Supported, Rejected };
+static std::atomic<StartupProfileState> startupProfile{StartupProfileState::Pending};
+
 void Init_Thread1()
 {
+    // This independent startup thread must not patch another game library
+    // before the loaded game's complete compiled profile is accepted.
+    while (startupProfile.load(std::memory_order_acquire) == StartupProfileState::Pending)
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    if (startupProfile.load(std::memory_order_acquire) != StartupProfileState::Supported) return;
 	while (!m_Anogs) 
     {
         m_Anogs = Tools::GetBaseAddress("libanogs.so");
@@ -1682,6 +1690,15 @@ void Init_Thread()
 
         sleep(1);
     }
+
+    const char* profileFailure = nullptr;
+    if (!PhantomTrigger::ValidateSupportedGameProfile(m_unity,profileFailure)) {
+        startupProfile.store(StartupProfileState::Rejected,std::memory_order_release);
+        PhantomTrigger::NativeDriverFailure(profileFailure);
+        LOGE("Native initialization stopped: %s",profileFailure ? profileFailure : "Unsupported game profile");
+        return;
+    }
+    startupProfile.store(StartupProfileState::Supported,std::memory_order_release);
 
     PhantomTrigger::InitializeNativeTrigger(m_unity);
     PhantomMovement::InitializeNativeMovement(m_unity);

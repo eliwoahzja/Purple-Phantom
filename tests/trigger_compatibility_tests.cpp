@@ -13,7 +13,16 @@ int main() {
     std::array<unsigned char, 24> note{{4,0,0,0,8,0,0,0,3,0,0,0,'G','N','U',0,
                                       0x13,0x05,0xbd,0xee,0xa3,0x0b,0x98,0x9f}};
     assert(NativeProfileDetail::MatchesBuildIdNote(note.data(),note.size()));
+    assert(NativeProfileDetail::MatchesModuleBuildIdNote(note.data(),note.size()));
     assert(!NativeProfileDetail::MatchesBuildIdNote(note.data(),note.size()-1));
+    auto updatedNote = note;
+    constexpr unsigned char updatedBuildId[]{0x05,0x6d,0x63,0x90,0xcc,0x71,0x28,0x65};
+    std::memcpy(updatedNote.data()+16,updatedBuildId,sizeof(updatedBuildId));
+    assert(!NativeProfileDetail::MatchesBuildIdNote(updatedNote.data(),updatedNote.size()));
+    assert(!NativeProfileDetail::MatchesModuleBuildIdNote(updatedNote.data(),updatedNote.size()));
+    const char* profileFailure = nullptr;
+    assert(!ValidateSupportedGameProfile(0,profileFailure));
+    assert(profileFailure && profileFailure[0]);
     note[16] ^= 1;
     assert(!NativeProfileDetail::MatchesBuildIdNote(note.data(),note.size()));
     assert(!NativeProfileDetail::MatchesBuildIdNote(nullptr,0));

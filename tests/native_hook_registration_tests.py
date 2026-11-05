@@ -6,6 +6,25 @@ import unittest
 
 
 class StartupHookTests(unittest.TestCase):
+    def test_unsupported_game_stops_both_startup_paths(self):
+        source = (Path(__file__).resolve().parents[1] /
+                  'src/main/jni/Main.cpp').read_text()
+        primary = source.split('void Init_Thread()\n{', 1)[1].split(
+            '__attribute__((constructor))', 1)[0]
+        companion = source.split('void Init_Thread1()\n{', 1)[1].split(
+            'void Init_Thread()', 1)[0]
+        rejection = re.search(
+            r'if\s*\(!PhantomTrigger::ValidateSupportedGameProfile\(.*?\)\)\s*\{(.*?)\n    \}',
+            primary, re.S)
+        self.assertIsNotNone(rejection)
+        self.assertIn('StartupProfileState::Rejected', rejection[1])
+        self.assertIn('return;', rejection[1])
+        self.assertLess(rejection.end(), primary.index('InitializeNativeTrigger'))
+        self.assertLess(primary.index('InitializeNativeTrigger'), primary.index('InstallCaptureOnly'))
+        self.assertLess(companion.index('StartupProfileState::Pending'), companion.index('Tools::GetBaseAddress'))
+        self.assertRegex(companion, r'if\s*\(.*?StartupProfileState::Supported\) return;')
+        self.assertLess(companion.index('StartupProfileState::Supported'), companion.index('MemoryPatch::'))
+
     def test_each_literal_native_target_is_registered_once(self):
         source = (Path(__file__).resolve().parents[1] /
                   'src/main/jni/Main.cpp').read_text()

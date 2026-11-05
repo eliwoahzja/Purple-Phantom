@@ -8,9 +8,10 @@
 #include <link.h>
 
 namespace PhantomTrigger {
-bool NativeProfileDetail::MatchesBuildIdNote(const unsigned char* data,
-                                            std::size_t size) noexcept {
-    constexpr unsigned char expected[]{0x13,0x05,0xbd,0xee,0xa3,0x0b,0x98,0x9f};
+namespace {
+template<std::size_t Count>
+bool MatchesNote(const unsigned char* data, std::size_t size,
+                 const unsigned char (&expected)[Count]) noexcept {
     if (!data || size < 12) return false;
     std::uint32_t nameSize = 0, valueSize = 0, type = 0;
     std::memcpy(&nameSize, data, 4);
@@ -19,6 +20,21 @@ bool NativeProfileDetail::MatchesBuildIdNote(const unsigned char* data,
     return nameSize == 4 && valueSize == sizeof(expected) && type == 3 &&
         size >= 16 + sizeof(expected) && std::memcmp(data + 12, "GNU\0", 4) == 0 &&
         std::memcmp(data + 16, expected, sizeof(expected)) == 0;
+}
+}
+
+bool NativeProfileDetail::MatchesBuildIdNote(const unsigned char* data,
+                                            std::size_t size) noexcept {
+    constexpr unsigned char expected[]{0x13,0x05,0xbd,0xee,0xa3,0x0b,0x98,0x9f};
+    return MatchesNote(data,size,expected);
+}
+
+bool NativeProfileDetail::MatchesModuleBuildIdNote(const unsigned char* data,
+                                                  std::size_t size) noexcept {
+    // Independent of the trigger identity above: all legacy offsets in Main
+    // and its headers still belong to this 1.6.57 binary.
+    constexpr unsigned char moduleBuild[]{0x13,0x05,0xbd,0xee,0xa3,0x0b,0x98,0x9f};
+    return MatchesNote(data,size,moduleBuild);
 }
 
 #if defined(__ANDROID__) && defined(__aarch64__) && !defined(STUDIO_STANDALONE_PREVIEW)
@@ -40,6 +56,8 @@ struct Validation {
     std::uintptr_t base;
     const CodeCheck* checks;
     std::size_t count;
+    bool (*identityMatcher)(const unsigned char*,std::size_t) noexcept =
+        NativeProfileDetail::MatchesBuildIdNote;
     bool valid = false;
     const char* failure = "The loaded game library could not be identified";
 };
@@ -56,7 +74,7 @@ int Validate(dl_phdr_info* info, std::size_t, void* argument) noexcept {
             !Range(*info, note.p_vaddr, note.p_filesz, PF_R)) continue;
         std::array<unsigned char, 256> bytes{};
         if (CompatibilityDetail::ReadSelf(state.base + note.p_vaddr, bytes.data(), note.p_filesz) &&
-            NativeProfileDetail::MatchesBuildIdNote(bytes.data(), note.p_filesz)) identity = true;
+            state.identityMatcher(bytes.data(), note.p_filesz)) identity = true;
     }
     if (!identity) {
         state.failure = "Unsupported game library build ID";
@@ -90,6 +108,22 @@ bool NativeProfileDetail::ValidateEntrypoints(std::uintptr_t base,
     return validation.valid;
 #else
     (void)base; (void)requested; (void)count;
+    return false;
+#endif
+}
+
+bool ValidateSupportedGameProfile(std::uintptr_t base, const char*& failure) noexcept {
+#if defined(__ANDROID__) && defined(__aarch64__) && !defined(STUDIO_STANDALONE_PREVIEW)
+    failure = "Native game profile verification unavailable";
+    if (!base) return false;
+    Validation validation{base,checks,sizeof(checks)/sizeof(checks[0])};
+    validation.identityMatcher = NativeProfileDetail::MatchesModuleBuildIdNote;
+    dl_iterate_phdr(Validate,&validation);
+    failure = validation.valid ? nullptr : validation.failure;
+    return validation.valid;
+#else
+    (void)base;
+    failure = "Native game profile verification unavailable";
     return false;
 #endif
 }

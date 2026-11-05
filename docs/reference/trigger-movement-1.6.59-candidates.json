@@ -1,0 +1,557 @@
+{
+  "status": "REFERENCE ONLY: declaration matches are not an approved runtime profile",
+  "dataset_revision": "2a376e8ee0bf5d907b4dfedbeabad8e1b75c45c4",
+  "old_version": "1.6.57",
+  "new_version": "1.6.59",
+  "old_libunity_build_id": "1305bdeea30b989f",
+  "new_libunity_build_id": "056d6390cc712865",
+  "new_libunity_sha256": "4e2e723da70deefb2cb986375645ae2fcab47343472cb7fdfcb49077b4919111",
+  "runtime_enabled": false,
+  "matched_managed_dependencies": 54,
+  "unresolved_native_helper_rvas": [
+    "0x3295318",
+    "0xc17874c"
+  ],
+  "candidates": [
+    {
+      "assembly": "UnityEngine.dll",
+      "namespace": "UnityEngine",
+      "class": "Camera",
+      "signature": "public float get_nearClipPlane()",
+      "old_rva": "0x5021fc4",
+      "candidate_rva": "0x52d3c60",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "UnityEngine.dll",
+      "namespace": "UnityEngine",
+      "class": "Camera",
+      "signature": "public float get_farClipPlane()",
+      "old_rva": "0x502200c",
+      "candidate_rva": "0x52d3ca8",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "UnityEngine.dll",
+      "namespace": "UnityEngine",
+      "class": "Camera",
+      "signature": "public Vector3 ViewportToScreenPoint(Vector3 position)",
+      "old_rva": "0x5023dfc",
+      "candidate_rva": "0x52d5ac8",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "UnityEngine.dll",
+      "namespace": "UnityEngine",
+      "class": "Camera",
+      "signature": "public Ray ViewportPointToRay(Vector3 position)",
+      "old_rva": "0x5023e78",
+      "candidate_rva": "0x52d5b44",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "UnityEngine.dll",
+      "namespace": "UnityEngine",
+      "class": "Camera",
+      "signature": "public static Camera get_main()",
+      "old_rva": "0x5024010",
+      "candidate_rva": "0x52d5cdc",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "UnityEngine.dll",
+      "namespace": "UnityEngine",
+      "class": "Screen",
+      "signature": "public static int get_width()",
+      "old_rva": "0x50504bc",
+      "candidate_rva": "0x530005c",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "UnityEngine.dll",
+      "namespace": "UnityEngine",
+      "class": "Screen",
+      "signature": "public static int get_height()",
+      "old_rva": "0x5050520",
+      "candidate_rva": "0x53000c0",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "Weapon",
+      "signature": "public WeaponFireComponent get_CurrentFireComponent()",
+      "old_rva": "0x50eb1e4",
+      "candidate_rva": "0x5472e48",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "Weapon",
+      "signature": "public bool AmmoCanFire()",
+      "old_rva": "0x50eb73c",
+      "candidate_rva": "0x5473f58",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "Weapon",
+      "signature": "public bool get_IsSingleShot()",
+      "old_rva": "0x50eba5c",
+      "candidate_rva": "0x5474278",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "Weapon",
+      "signature": "public bool get_IsBurstFire()",
+      "old_rva": "0x50ebb28",
+      "candidate_rva": "0x5474344",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "Weapon",
+      "signature": "public bool IsWeaponReleaseToFire()",
+      "old_rva": "0x50ee190",
+      "candidate_rva": "0x54769a8",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "Weapon",
+      "signature": "public float GetAimingPercentage()",
+      "old_rva": "0x5113b4c",
+      "candidate_rva": "0x549c504",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "Weapon",
+      "signature": "public virtual void PrepareInputParam(CheckFireParam param)",
+      "old_rva": "0x511ab0c",
+      "candidate_rva": "0x54a373c",
+      "old_virtual_slot": 202,
+      "candidate_virtual_slot": 202
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "Weapon",
+      "signature": "public virtual bool CanFire()",
+      "old_rva": "0x5126cc4",
+      "candidate_rva": "0x54affe4",
+      "old_virtual_slot": 269,
+      "candidate_virtual_slot": 274
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "Weapon",
+      "signature": "public float get_DelaySprintFire()",
+      "old_rva": "0x513cbc4",
+      "candidate_rva": "0x54c9924",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "Pawn",
+      "signature": "public void StandUp(bool immediately = false, bool force = false)",
+      "old_rva": "0x518bc48",
+      "candidate_rva": "0x535bbec",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "Pawn",
+      "signature": "public bool IsAiming()",
+      "old_rva": "0x519bb10",
+      "candidate_rva": "0x536bae0",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "Pawn",
+      "signature": "public bool get_IsInTransition()",
+      "old_rva": "0x51b463c",
+      "candidate_rva": "0x53863a0",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "ImpactInfo",
+      "signature": "public static ImpactInfo Alloc()",
+      "old_rva": "0x64b554c",
+      "candidate_rva": "0x62588e4",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "ImpactInfo",
+      "signature": "public static void Recycle(ImpactInfo info)",
+      "old_rva": "0x64b56f0",
+      "candidate_rva": "0x6258aa0",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "PlayerController",
+      "signature": "protected virtual void UpdateLocalPawn(float deltaTime)",
+      "old_rva": "0x666894c",
+      "candidate_rva": "0x66b6298",
+      "old_virtual_slot": 51,
+      "candidate_virtual_slot": 51
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "PlayerController",
+      "signature": "public virtual void CheckCrouch()",
+      "old_rva": "0x666ae64",
+      "candidate_rva": "0x66b882c",
+      "old_virtual_slot": 62,
+      "candidate_virtual_slot": 62
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "AttackableColliderMap",
+      "signature": "public AttackableTarget GetAttackableTargetForCollider(Collider col)",
+      "old_rva": "0x773fa68",
+      "candidate_rva": "0x78af19c",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "GamePlay",
+      "signature": "public static MatchGame get_MatchGame()",
+      "old_rva": "0x8569b10",
+      "candidate_rva": "0x801191c",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "GamePlay",
+      "signature": "public static AttackableColliderMap get_AttackableColliderMap()",
+      "old_rva": "0x856a020",
+      "candidate_rva": "0x8011e2c",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "GamePlay",
+      "signature": "public static PlayerController get_LocalPC()",
+      "old_rva": "0x856a8a8",
+      "candidate_rva": "0x80126b4",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "GamePlay",
+      "signature": "public static Pawn get_LocalPawn()",
+      "old_rva": "0x856aa08",
+      "candidate_rva": "0x8012814",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "BaseGame",
+      "signature": "public bool IsInSmoke(Vector3 point)",
+      "old_rva": "0x9cc3518",
+      "candidate_rva": "0x5e5fa20",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "BaseGame",
+      "signature": "public bool IsSmokeInMiddle(Vector3 source, Vector3 target)",
+      "old_rva": "0x9cc36e0",
+      "candidate_rva": "0x5e5fbe8",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "BaseGame",
+      "signature": "public bool IsSmokeClusterNotInSameSide(Vector3 source, Vector3 target)",
+      "old_rva": "0x9cc38ac",
+      "candidate_rva": "0x5e5fdb4",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "PhysicsUtil",
+      "signature": "public static bool SingleLineCheckNoAlloc(Vector3 startTrace, Vector3 direction, float distance, int traceFlag, ImpactInfo impactInfo, QueryTriggerInteraction queryTriggerInteraction = 0)",
+      "old_rva": "0xa18f6c4",
+      "candidate_rva": "0x66f17ec",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "PhysicsUtil",
+      "signature": "public static bool SingleLineCheckWorld(Vector3 startTrace, Vector3 direction, float distance, ref float HitDistance, QueryTriggerInteraction qti = 0)",
+      "old_rva": "0xa1905e0",
+      "candidate_rva": "0x66f2708",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "PhysicsUtil",
+      "signature": "public static bool SingleLineCheckAttackableTarget(AttackableTarget attackableTarget, Collider hitCollider, Vector3 startTrace, Vector3 direction, float distance, int obstacleFlag, ref ImpactInfo impactInfo)",
+      "old_rva": "0xa19c4c4",
+      "candidate_rva": "0x66fe6b4",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "",
+      "class": "CheckFireParam",
+      "signature": "public void set_IsButtonDown(bool value)",
+      "old_rva": "0xa81f7e8",
+      "candidate_rva": "0xba32e30",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "",
+      "class": "CheckFireParam",
+      "signature": "public void set_IsPress(bool value)",
+      "old_rva": "0xa81f820",
+      "candidate_rva": "0xba32e68",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "",
+      "class": "CheckFireParam",
+      "signature": "public void set_FireButtonDown(bool value)",
+      "old_rva": "0xa81f898",
+      "candidate_rva": "0xba32ee0",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "",
+      "class": "CheckFireParam",
+      "signature": "public void set_FireButtonUp(bool value)",
+      "old_rva": "0xa81f8a8",
+      "candidate_rva": "0xba32ef0",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "",
+      "class": "CheckFireResult",
+      "signature": "public void set_StartFire(bool value)",
+      "old_rva": "0xa81fa84",
+      "candidate_rva": "0xba330cc",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "",
+      "class": "CheckFireResult",
+      "signature": "public void set_StopFire(bool value)",
+      "old_rva": "0xa81fb30",
+      "candidate_rva": "0xba33178",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "",
+      "class": "WeaponFireModeBase",
+      "signature": "protected InputSettingConfig get_mCurSettingInfo()",
+      "old_rva": "0xbb4a5bc",
+      "candidate_rva": "0xc912ef0",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "",
+      "class": "WeaponFireModeBase",
+      "signature": "public void UpdateFireInput(float deltaTime)",
+      "old_rva": "0xbb4ae14",
+      "candidate_rva": "0xc913748",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "",
+      "class": "WeaponFireModeUnit",
+      "signature": "public void UpdateFireButtonStatus(CheckFireParam fireResult)",
+      "old_rva": "0xbb4b66c",
+      "candidate_rva": "0xc913fa4",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "",
+      "class": "WeaponFireModeBase",
+      "signature": "public bool CanManaulFire()",
+      "old_rva": "0xbb4bd5c",
+      "candidate_rva": "0xc914698",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "",
+      "class": "WeaponFireModeBase",
+      "signature": "private bool ShouldReleaseToFire()",
+      "old_rva": "0xbb4df2c",
+      "candidate_rva": "0xc916900",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "",
+      "class": "WeaponFireModeBase",
+      "signature": "public void OnStartMatch(GameInfo gameInfo)",
+      "old_rva": "0xbb4f2b4",
+      "candidate_rva": "0xc917c78",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "",
+      "class": "WeaponFireModeBase",
+      "signature": "public virtual void OnEndMatch()",
+      "old_rva": "0xbb4f3a4",
+      "candidate_rva": "0xc917d68",
+      "old_virtual_slot": 6,
+      "candidate_virtual_slot": 6
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "",
+      "class": "WeaponFireModeMgr",
+      "signature": "public static WeaponFireModeBase get_FireModeControl()",
+      "old_rva": "0xbb503ec",
+      "candidate_rva": "0xc918e3c",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "InputSettingConfig",
+      "signature": "public bool get_IsAuto()",
+      "old_rva": "0xc34a0b8",
+      "candidate_rva": "0xc0b6d24",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "Inventory",
+      "signature": "public bool IsGun()",
+      "old_rva": "0xc364d3c",
+      "candidate_rva": "0xc0d1ee0",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "Inventory",
+      "signature": "public bool IsNormalWeapon()",
+      "old_rva": "0xc365324",
+      "candidate_rva": "0xc0d24c8",
+      "old_virtual_slot": null,
+      "candidate_virtual_slot": null
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameBase",
+      "class": "WeaponCODSniper",
+      "signature": "public override void PrepareInputParam(CheckFireParam param)",
+      "old_rva": "0xc3dc644",
+      "candidate_rva": "0xc38d790",
+      "old_virtual_slot": 202,
+      "candidate_virtual_slot": 202
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "WeaponFireComponent_Instant",
+      "signature": "protected virtual void CreateBulletLine(Vector3 startPos, Vector3 dir, bool isDualFire = false)",
+      "old_rva": "0xc9b6f90",
+      "candidate_rva": "0xd5319d4",
+      "old_virtual_slot": 112,
+      "candidate_virtual_slot": 114
+    },
+    {
+      "assembly": "Assembly-CSharp.dll",
+      "namespace": "GameEngine",
+      "class": "WeaponFireComponent_Instant",
+      "signature": "public virtual void CreateBulletProjectile(Vector3 startPos, Vector3 dir, WeaponImpactComponent weaponImpact, int itemID, int flySmokeAssetID, bool enableVirtualStartPos, Vector3 virtualStartPos)",
+      "old_rva": "0xc9c33a4",
+      "candidate_rva": "0xd53da64",
+      "old_virtual_slot": 124,
+      "candidate_virtual_slot": 126
+    }
+  ]
+}
